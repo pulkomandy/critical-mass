@@ -1,0 +1,111 @@
+<html>
+<head>
+<title>Critical Mass 2.0 Revision History</title>
+</head>
+<body bgcolor="#FFFFFF">
+<table>
+<p align=center>
+<font size=5>Revision History</font><br><br>
+</p>
+Nobody sent money when I said it was shareware, so I shan't bother anymore.<br>
+<br>Consider it freeware.  I.e. you can play it, distribute it, throw it in the garbage can, whatever, so long as authorship is acknowledged.<br>
+<br>
+Hamish Carr<br>
+hcarr@cs.ubc.ca<br>
+<br>
+
+<br>New in version 1.9:<br>
+<br>Complete rewrite of all the bugs.<br>
+<br>Take back moves<br>
+<br>Option for wraparound board.<br>
+<br>True toroidal play, courtesy of OpenGL.<br>
+(To rotate the torus, right-click & drag the mouse)<br>
+(To add bombs on the torus, left-click)<br>
+NB:  adding bombs only works when torus in original orientation (see <a href="revhist.html">Known Bugs</a>)<br>
+<br>
+
+<br><b>Version 1.9 (November, 1998):</b><br>
+<br>Major overhaul of the code.  I cleaned up many of the outstanding uglinesses, and in fact pretty much rewrote the whole thing.  It is now structured as three Loopers talking to each other (the Window, the Application, and the Brain).  Sub-brains are now BLoopers as well, and killing a deep-thought thread now does not leak memory.<br>
+<br>Support for wraparound play now added.  In order to do this, the original C pointer walks through the board have been replaced with indices.  Much less efficient, and you may notice that it has slowed down.<br>
+<br>Experimental OpenGL support for actual play on the torus.<br>
+<br>Now comes with the ability to take back moves (as many as desired).<br>
+<br>Known bugs:<br>
+<ol>
+	<li>Does not always reset player information properly on Take Back, New Game and change of players:  changing the players again solves it.
+	<li>In OpenGL mode, picking only works properly with the torus in it's original alignment.
+</ol>
+<br>TO DO:<br>
+<ol>
+	<li>Fix the bugs
+	<li>Update the documentation properly
+	<li>Add variable size playing fields
+	<li>Support Internet play via BMORB
+	<li>Add animation of electrons
+	<li>Soundtrack.  Would help if I could write music. . .
+	<li>Intel version - would help if I had access to a Betel box
+</ol>
+<br>
+<br><b>Version 1.01a (July, 1998):</b><br>
+<br>Intel version compiled.  The sounds are slightly different, and somewhat harsher.  I lost the original sounds, and had to improvise.<br>
+<br>The Intel version seems to have a bug that causes it to crash sporadically.  If someone can find out why, I would be interested.<br>
+<br>The PPC version frequently crashes when exiting.  I count this as a minor nuisance, and haven't bothered tracking down why.<br>
+<br>
+<br><b>Version 1.01 (January, 1998):</b><br>
+Features already implemented:<br>
+<br>
+<ol>
+	<li>Independent threads for display & thinking --> it starts thinking up it's next move while it is still displaying the results of your move.  Semaphores are my friends.  ;-)
+	<li>Minmax lookahead for AI.
+	<li>Heuristic evaluation of boards for all except the Random player
+</ol>
+<br>Features from the Mac version that weren't implemented:
+<ol>
+	<li>Saved games.
+	<li>Move takeback
+	<li>Unlimited undo/redo/replay
+	<li>Processor hogging (hey - no pre-emptive multitasking on the MacOS - it's a feature, not a bug)
+	<li>B/W version (I used to have a 21" G/S monitor)
+	<li>Suggested moves
+</ol>
+Features that I *MAY* get round to implementing some day:
+<ol>
+	<li>Alpha-beta pruning:  With a branching factor of 20-30, the top level (a 4-level lookahead) is already slow.  Alpha-beta pruning might let us lookahead 6-levels, but even more slowly.  Oddly, it works better with even lookaheads than odd lookaheads.
+	<li>Brain restarting.  At present, changes to the type of players take effect as of their next move.  I *SHOULD* change it immediately, but I'm feeling lazy
+</ol>
+
+<br><b>Known Bugs:	(as of v. 1.0.1)</b><br>
+<br>If the program crashes, it should show an alert box with a strange message, then die, using the regular BeOS crash alert.  I know what's causing this, but since I haven't had it crash yet except when I left stuff out, I don't feel inclined to fix it up.<br>
+<br>Bonus trivia question:	what does the alert box say, and how do you get it to show up?<br>
+<br>When you select "New Game", it kills the other threads:  this means that some memory will leak (those threads use pointers to some data structures).  Again, I'm not inclined to worry about it right now.<br>
+
+<br><b>Additions as of Version 1.0.1:</b><br>
+<br>Thanks to Markian Hlynka for this idea:<br>
+<br>Added a new menu to allow the user to set the priority assigned to the threads that do the thinking at the "Bill Kocay" level.  Use at your own risk!<br>
+<br>Fixed bug in memory allocation when starting up, and fixed MIME type on 	initialization (thanks to J. Watte for finding these).<br>
+<br>
+<br><b>Version 1.0	Jan. 10, 1998</b><br>
+<br>higher-level brains are now multi-threaded - 5 threads think up the next move, 1 for each row.  I guess if someone builds an 8-processor box, I may need to update it.. ;-)<br>
+<br>priority of high-level brain threads reduced to B_LOW_PRIORITY.  This keeps the GUI from slowing down elsewhere.  I guess that means that the pop-up 	menus in the Tracker are B_LOW_PRIORITY, eh?<br>
+<br>
+<br><b>Version 0.98 Jan. 8, 1998:</b><br>
+<br>sound now works<br>
+<br>added status bar for higher level thinkers<br>
+<br>adjusted the right-hand edge of the window slightly<br>
+
+<br><br>
+<hr>
+<ul>
+<li><a href="index.html">Index</a><br>
+<li><a href="whatsnew.html">What's New</a><br>
+<li><a href="background.html">Background</a><br>
+<li><a href="description.html">Description</a><br>
+<li><a href="quickstart.html">Quick Start</a><br>
+<li><a href="interface.html">Interface</a><br>
+<li><a href="game_rules.html">Game Rules</a><br>
+<li><a href="strategy.html">Strategy</a><br>
+<li>Revision History<br>
+<li><a href="code.html">The Code</a><br>
+<li><a href="credits.html">Credits</a><br>
+</ul>
+</body>
+</html>
