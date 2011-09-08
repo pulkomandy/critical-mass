@@ -4,9 +4,8 @@
 
 //	GUI declarations
 
-#define N_BITMAPS 13										//	1-5 red / blue, booms, white
-#define CELL_EMPTY 6										//	offset into array of bitmaps
-#define CELL_SIZE 64										//	the size of a cell
+#define N_BITMAPS 13 // 1-5 red / blue, booms, white
+#define CELL_EMPTY 6 // offset into array of bitmaps
 
 // error messages
 #define DIE_BAD_ENTRY SUICIDE_NOTE"I couldn't find the file with the pretty pictures (BEntry failed)"
@@ -17,25 +16,23 @@
 
 // display speeds
 	
-#define SLOW_SPEED 1200000									//	i.e. 1.2 second
-#define MEDIUM_SPEED 600000									//	i.e. 0.6 second
-#define FAST_SPEED 300000									//	i.e. 0.3 second
+#define SLOW_SPEED 1200000		//	i.e. 1.2 second
+#define MEDIUM_SPEED 600000		//	i.e. 0.6 second
+#define FAST_SPEED 300000		//	i.e. 0.3 second
 
 // player types
 
-#define HUMAN_PLAYER 0										//	types for the players
-#define RANDOM_PLAYER 1										//	random choice 
-#define SMART_PLAYER 2										//	board evaluator
-#define AI_PLAYER 3											//	shallow lookahead
-#define BILL_KOCAY_PLAYER 4									//	deep lookahead
-#define ALBERT_EINSTEIN_PLAYER 5								//	very deep lookahead
+#define HUMAN_PLAYER 0			//	types for the players
+#define RANDOM_PLAYER 1			//	random choice 
+#define SMART_PLAYER 2			//	board evaluator
+#define AI_PLAYER 3				//	shallow lookahead
+#define BILL_KOCAY_PLAYER 4		//	deep lookahead
+#define ALBERT_EINSTEIN_PLAYER 5 // very deep lookahead
 
 // messages between components
-// #define CM_FATAL_ERROR				1000L				//	a fatal error (reserved)
-
-#define CM_MSG_ACCEPT_CLICKS 			2000L					//	tells view to accept clicks
-#define CM_MSG_REJECT_CLICKS 			2001L					//	tells view to reject clicks
-#define CM_MSG_ACK_REJECT_CLICKS		2002L					//	view acknowledges "reject" message
+#define CM_MSG_ACCEPT_CLICKS 		2000L					//	tells view to accept clicks
+#define CM_MSG_REJECT_CLICKS 		2001L					//	tells view to reject clicks
+#define CM_MSG_ACK_REJECT_CLICKS	2002L					//	view acknowledges "reject" message
 #define CM_MSG_SHOW_BOARD			2003L					//	tells the view to show a board
 #define CM_MSG_MOVE_CHOSEN 			2004L					//	message from view to app with move
 #define CM_MSG_DISPLAY_DONE			2005L					//	message that display sequence is done
@@ -45,18 +42,18 @@
 #define CM_MAKE_STATUS_BAR_RED		3002L					//	tells the window to make status bar red
 #define CM_MAKE_STATUS_BAR_BLUE		3003L					//	tells the window to make status bar blue
 
-#define CM_MARK_SOUND_ON				4000L					//	tells window to mark sound as being on
+#define CM_MARK_SOUND_ON			4000L					//	tells window to mark sound as being on
 #define CM_MARK_SOUND_OFF			4001L					//	tells window to mark sound as being off
 
-#define CM_MSG_STOP_THINKING			5000L					//	message to brain to stop thinking
-#define CM_MSG_ACK_STOP_THINKING		5001L					//	acknowledgement
-#define CM_MSG_MAKE_MOVE				5002L					//	instruction to brain to come up with move
-#define CM_MSG_CANT_MAKE_MOVE			5003L					//	brain doesn't understand request
+#define CM_MSG_STOP_THINKING		5000L					//	message to brain to stop thinking
+#define CM_MSG_ACK_STOP_THINKING	5001L					//	acknowledgement
+#define CM_MSG_MAKE_MOVE			5002L					//	instruction to brain to come up with move
+#define CM_MSG_CANT_MAKE_MOVE		5003L					//	brain doesn't understand request
 
-#define CM_MSG_ROW_STOP_THINKING		6000L					//	command to cancel search
+#define CM_MSG_ROW_STOP_THINKING	6000L					//	command to cancel search
 #define CM_MSG_ACK_ROW_STOP_THINKING	6001L					//	acknowledge it
 #define CM_MSG_CONSIDER_ROW			6002L					//	command to search a row
-#define CM_MSG_CONSIDER_CELL			6003L					//	command to search a cell
+#define CM_MSG_CONSIDER_CELL		6003L					//	command to search a cell
 #define CM_MSG_CELL_RESULT			6004L					//	message with result of cell
 	
 //	menu messages
@@ -64,12 +61,12 @@
 #define AboutCMItem 				11001L					//	standard about box	
 #define NewGameItem					11002L					//	restart game
 #define TakeBackItem				11003L					//	take back last move
-#define QuitItem					B_QUIT_REQUESTED			//	quit the game
+#define QuitItem					B_QUIT_REQUESTED		//	quit the game
 
 //	items on Player 1 Menu
-#define Player1HumanItem				12001L					//	define the red player to be human
+#define Player1HumanItem			12001L					//	define the red player to be human
 #define Player1RandomItem			12002L					//	define the red player to be random
-#define Player1SmartItem				12003L					//	define the red player to be smart
+#define Player1SmartItem			12003L					//	define the red player to be smart
 #define Player1AIItem				12004L					//	define the red player to be AI
 #define Player1IsBillKocayItem		12005L					//	define the red player to be Bill Kocay
 #define Player1IsAlbertEinsteinItem	12006L					//	define the red player to be Albert Einstein

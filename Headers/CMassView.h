@@ -9,6 +9,7 @@
 #include "CMassBlitView.h"
 #include <GLView.h>
 #include "Ball.h"
+#include <algorithm>
 
 const int dragBall = 0, dragObject = 1, dragScale = 2;								//	constants for which form of drag is being performed			
 
@@ -16,7 +17,7 @@ class CMassView : public BGLView													//	our viewing panel
 	{
 	private:	
 	CMBoard theBoard;																//	the board currently being displayed
-	BBitmap **theBitmaps;															//	cache for the bitmaps
+	struct picture* theBitmaps;															//	cache for the bitmaps
 	BBitmap *theBlitMap;															//	bitmap from which to blit
 	CMassBlitView *theBlitView;														//	view to use to set up blitting
 	bool acceptClicks;																//	whether to accept clicks from the player
@@ -31,12 +32,20 @@ class CMassView : public BGLView													//	our viewing panel
 	int dragMode;																	//	start off in dragBall mode								
  	float dragOld_x, dragOld_y;														//	previous x, y coordinates of drag							
 	GLuint texName;																	//	name of texture
+	
+	CMBoard* currentBoard;
 
 	void CreateTorus(float ringRadius, float tubeRadius, GLenum mode = GL_RENDER);	//	creates display list for torus
 	public:
-	CMassView(BRect frame, const char *name, BBitmap **newBitmaps);						//	constructor
+	CMassView(BRect frame, const char *name, struct picture*newBitmaps);
 	virtual void AttachedToWindow();												//	called when added to window
 	virtual	void Draw(BRect updateRect);											//	draws the board
 	virtual void MouseDown(BPoint where);											//	reacts to mouse clicks
 	virtual void MessageReceived(BMessage *theMessage);								//	reacts to messages
+	virtual void FrameResized(float neww, float newh);
+	
+	float marginx() {float w = Bounds().Width(); return w - ((int)w/CELL_SIZE)*CELL_SIZE;}
+	float marginy() {float h = Bounds().Height(); return h - ((int)h/CELL_SIZE)*CELL_SIZE;}
+	
+	static int CELL_SIZE;
 	}; // end of class CMassView

@@ -6,12 +6,20 @@
 
 #include "CMassBlitView.h"
 #include <Bitmap.h>
+#include <errno.h>
+#include <cstdio>
 
-CMassBlitView::CMassBlitView(BRect frame, char *name, BBitmap **newBitmaps, BBitmap *newBlitMap)	//	constructor
+#include <CMassApplication.h>
+#include <IconUtils.h>
+#include <InterfaceDefs.h>
+
+CMassBlitView::CMassBlitView(BRect frame, char *name, struct picture* newBitmaps, BBitmap *newBlitMap)	//	constructor
 	: BView(frame, name, B_FOLLOW_ALL, B_WILL_DRAW)										//	call inherited constructor
 	{
 	theBitmaps = newBitmaps;															//	save the bitmap pointer
 	theBlitMap = newBlitMap;															//	save the blitmap
+	
+	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	} // end of constructor
 	
 void CMassBlitView::Draw(BRect updateRect)												//	draw the view
@@ -19,7 +27,27 @@ void CMassBlitView::Draw(BRect updateRect)												//	draw the view
 	#pragma unused(updateRect)														//	we ignore this
 	int i,j;																		//	loop indices
 	BPoint BombPoint;																//	where to draw the bomb
-	long nBombs;																	//	the number of bombs in a cell
+	long nBombs;
+	int CELL_SIZE = CMassView::CELL_SIZE;
+	
+	SetDrawingMode(B_OP_OVER);
+
+	// Generate 1 more column and line to make sure we cover the area around the playfield...
+	for (i = theBoard.nRows + 1 ; --i >= 0;)
+	{
+		for (int j = theBoard.nCols + 1 ; --j >= 0;)
+		{
+			if ((i * theBoard.nRows + j)%2)
+				SetHighColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+			else
+				SetHighColor(tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_1_TINT));
+			BRect start (j * CELL_SIZE, i * CELL_SIZE, (j+1) * CELL_SIZE, (i+1) * CELL_SIZE);
+			FillRect(start);
+		}
+	}
+	
+	SetDrawingMode(B_OP_ALPHA);
+	SetBlendingMode(B_PIXEL_ALPHA, B_ALPHA_OVERLAY);	
 		
 	for (i = 0; i < theBoard.nRows; i++)												//	loop down the rows
 		{
@@ -31,8 +59,11 @@ void CMassBlitView::Draw(BRect updateRect)												//	draw the view
 			if (isOpenGL)															//	crude hack to reverse colours
 				nBombs = CELL_EMPTY - nBombs;											//	reverse the bitmaps
 			else
-				nBombs += CELL_EMPTY;												//	add this to get the correct index
-			DrawBitmap(theBitmaps[nBombs]);											//	and draw the bitmap
+				nBombs += CELL_EMPTY;
+			BRect size(0, 0, CELL_SIZE, CELL_SIZE);
+			BBitmap rendered(size, 0, B_RGB32);
+			BIconUtils::GetVectorIcon((const uint8*)theBitmaps[nBombs].bitmap, theBitmaps[nBombs].len, &rendered);
+			DrawBitmap/*Async*/(&rendered);
 			} // end of for j loop
 		} // end of for i loop	
 	Sync();																		//	wait for the server to draw it

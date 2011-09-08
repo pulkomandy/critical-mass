@@ -6,11 +6,14 @@
 #include "CMassView.h"
 #include "Ball.h"
 
+#include <algorithm>
+
 #include <GLView.h>
 
-CMassView::CMassView(BRect frame, const char *name, BBitmap **newBitmaps)					//	constructor
-	   	   : BGLView(frame, name, B_FOLLOW_ALL, 0, BGL_RGB | BGL_DEPTH | BGL_DOUBLE)//	call inherited constructor
+CMassView::CMassView(BRect frame, const char *name, struct picture* newBitmaps)					//	constructor
+	   	   : BGLView(frame, name, B_FOLLOW_ALL, B_FULL_UPDATE_ON_RESIZE, BGL_RGB | BGL_DEPTH | BGL_DOUBLE)//	call inherited constructor
 	{
+	CELL_SIZE = 63;
 	theBitmaps = newBitmaps;														//	save a pointer to the bitmaps
 	acceptClicks = false;															//	and ignore any clicks
 	inGLMode = false;																//	start off NOT in GL mode
@@ -21,23 +24,18 @@ CMassView::CMassView(BRect frame, const char *name, BBitmap **newBitmaps)					//
 	offset_x = 0.0; offset_y = 0.0;													//	allows us to move the object around laterally				
 	dragMode = dragBall;															//	start off in dragBall mode								
 	Ball_Init(&ball);																//	initialize the arcball									
-	Ball_Place(&ball, qOne, 0.75);													//	place the arcball (at 3/4 of window size)					
-
-	theBlitMap = new BBitmap(theRect, B_RGB_32_BIT, true);							//	create blitmap
-	theBlitView = new CMassBlitView(theRect, "BlitView", newBitmaps, theBlitMap);	//	create the blitview
-	theBlitView->isOpenGL = false;													//	and start in OpenGL mode
-	theBlitMap->AddChild(theBlitView);												//	add the blitview to the blitmap
-	theBlitView->Generate();														//	fill in the blitmap
+	Ball_Place(&ball, qOne, 0.75);													//	place the arcball (at 3/4 of window size)
+	
+	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	} // end of CMassView constructor
 
 void CMassView::AttachedToWindow()													//	called when added to window
-	{
+{
 	GLfloat light_position[] = {0.0, 3.0, 4.0, 0.0};								// position of light source (at infinity)			
 	GLfloat light_colour[] = {1.0, 1.0, 1.0, 0.0};									//	colour of light source
 
 	GLfloat torus_colour[] = {1.0, 1.0, 1.0, 0.0};									// set the torus to green								
-//	GLfloat torus_specular_colour[] = {1.0, 1.0, 1.0, 0.0};							// and set shininess up a little bit				
-	BRect viewBounds = Bounds();													//	retrieve view bounds
+//	GLfloat torus_specular_colour[] = {1.0, 1.0, 1.0, 0.0};							// and set shininess up a little bit
 	BGLView::AttachedToWindow();													//	call inherited attachment function
 	LockGL();																		//	make sure this is thread-safe
 
@@ -68,13 +66,16 @@ void CMassView::AttachedToWindow()													//	called when added to window
 	CreateTorus(100.0, 50.0, GL_RENDER);											//	set up a list for rendering
 	glEndList();																	// close the list											
 	UnlockGL();																		//	unlock GL
-	} // end of AttachedToWindow()
+
+	FrameResized(Bounds().Width(), Bounds().Height());
+	
+} // end of AttachedToWindow()
 	
 void CMassView::Draw(BRect updateRect)												//	draw the view
 	{
 	if (!inGLMode)
 		{
-		DrawBitmap(theBlitMap, updateRect, updateRect);								//	blit the bits
+		//DrawBitmap(theBlitMap, updateRect, updateRect);								//	blit the bits
 		return;
 		} // end of simple case
 	else
@@ -95,7 +96,7 @@ void CMassView::Draw(BRect updateRect)												//	draw the view
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);				//	and the horizontal
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);			//	set magnification filter
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);			//	set shrinking filter
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, theBlitMap->Bits());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, theBlitMap->Bounds().Width() + 1, theBlitMap->Bounds().Height() + 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, theBlitMap->Bits());
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);				//	just stick the texture on		
 		glBindTexture(GL_TEXTURE_2D, texName);										//	bind the texture to the name (again?)
 		glCallList(torusDisplayListID);												// and call the display list							
@@ -108,6 +109,7 @@ void CMassView::Draw(BRect updateRect)												//	draw the view
 
 void CMassView::MouseDown(BPoint where)												//	reacts to mouse clicks
 	{
+	BRect bounds = Bounds();
 	long whichButtons = 1;															//	used for tracking which buttons are down
 	Window()->CurrentMessage()->FindInt32("buttons", &whichButtons);				//	find out which buttons are down
 	
@@ -201,10 +203,11 @@ void CMassView::MessageReceived(BMessage *theMessage)								//	reacts to messag
 			status_t errCode = theMessage->FindPointer("displayBoard", &(void*)sentBoard);	//	retrieve the board
 			if (errCode == B_NO_ERROR)												//	if it was successful
 				{
+				delete currentBoard;
 				theBlitView->theBoard = theBoard = *sentBoard;						//	copy the board to our display board
 				theBlitView->Generate();											//	recreate the blitmap
 				Invalidate();														//	invalidate the whole view to force redraw
-				delete sentBoard;													//	dispose of the board we were sent
+				currentBoard = sentBoard;													//	dispose of the board we were sent
 				} // end of successful board transfer
 			break;
 		}
@@ -291,4 +294,23 @@ void CMassView::CreateTorus(float ringRadius, float tubeRadius, GLenum mode)		//
 			} // end of loop around tube
 		} //end of loop around ring
 	} // end of CreateTorus
+
+
+void CMassView::FrameResized(float neww, float newh)
+{
+	if (neww < 32 || newh < 32) return;
+	CELL_SIZE = std::min(Bounds().Width()/DEFAULT_N_COLS, Bounds().Height()/DEFAULT_N_ROWS);
+	//BRect bitampSize(0, 0, CELL_SIZE * DEFAULT_N_COLS, CELL_SIZE * DEFAULT_N_ROWS);
+	BRect bitmapSize = Bounds();
+	theBlitMap = new BBitmap(bitmapSize, B_RGB_32_BIT, true);							//	create blitmap
+	theBlitView = new CMassBlitView(bitmapSize, "BlitView", theBitmaps, theBlitMap);	//	create the blitview
+	if (currentBoard)
+		theBlitView->theBoard = *currentBoard;
+	// TODO ? set this to true in OpenGL mode ? (and use a 512x512 rect ?)
+	theBlitView->isOpenGL = false;													//	and start in OpenGL mode
+	theBlitMap->AddChild(theBlitView);												//	add the blitview to the blitmap
+	theBlitView->Generate();														//	fill in the blitmap
+	SetViewBitmap(theBlitMap, B_FOLLOW_TOP | B_FOLLOW_LEFT, false);
+}
 	
+int CMassView::CELL_SIZE;

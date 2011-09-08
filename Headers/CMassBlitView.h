@@ -17,11 +17,11 @@ class CMassBlitView : public BView 													//	our viewing panel
 	CMBoard theBoard;																//	the board currently being displayed
 	bool isOpenGL;																	//	whether generating for OpenGL
 	private:
-	BBitmap **theBitmaps;															//	cache for the bitmaps
+	struct picture* theBitmaps;															//	cache for the bitmaps
 	BBitmap *theBlitMap;															//	the bit map for blitting
 
 	public:
-	CMassBlitView(BRect frame, char *name, BBitmap **newBitmaps, BBitmap *newBlitMap);			//	constructor
+	CMassBlitView(BRect frame, char *name, struct picture* newBitmaps, BBitmap *newBlitMap);			//	constructor
 	virtual void Draw(BRect updateRect);												//	draw the view
 	void Generate();																//	regenerates the contents of the view
 	}; // end of class CMassBlitView

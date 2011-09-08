@@ -4,48 +4,50 @@
 #include <Resources.h>
 #include <Alert.h>
 
+#include <CMassWindow.h>
+
 char *soundNames[N_SOUNDS] = {"Da Winner", "Player 1 Boom", "Player 2 Boom"};
 
 CMassApplication::CMassApplication()
-		  		  : BApplication("application/x-critical-mass")							//	call inherited constructor
-	{
-	BRect aRect;																		//	for setting size of window
-	LoadSoundsAndImages();																//	load the sounds
-	aRect.Set(100, 100, 483, 470);														//	set a rectangle to a fixed size
-	theCMWindow = new CMassWindow(aRect, theBitmaps);									//	and create the window
-	theCMWindow->Show();																//	make the window visible
+	: BApplication("application/x-critical-mass")
+{
+	BRect aRect;
+	LoadSoundsAndImages();
+	aRect.Set(100, 100, 483, 470);
+	theCMWindow = new CMassWindow(aRect, theBitmaps);
+	theCMWindow->Show();
 	
-	waitingForAckRejectClicks = false;													//	we don't start off waiting
-	waitingForAckStopThinking = false;													//	we don't start off waiting
-	waitingForComputerMove = false;														//	flag for whether we thought ahead
-	nextDisplayTime = system_time();													//	retrieve the time
-	timeQuantum = MEDIUM_SPEED;															//	set the initial display speed
-	pendingMove = NULL;																	//	we start with no move pending
-	doingPulse = false;																	//	we don't start off in Pulse()
-	SetPulseRate(100000);																//	tell it to pulse every 0.1 sec.
-	theDisplayPlayer = RED_PLAYER;														//	set whose display it is
-	redPlayerType = HUMAN_PLAYER; bluePlayerType = RANDOM_PLAYER;						//	set the player types												
-	showingExplosion = false;															//	set the flag for explosions
-	doneDisplaying = true;																//	say we're not done yet
-	soundOn = true;																		//	switch sounds on
-	isToroidal = false;																	//	we start off non-toroidal
-	isOpenGL = false;																	//	and not rendering it
-	GenerateMove();																		//	call routine to generate move
-	} // end of CMassApplication constructor
+	waitingForAckRejectClicks = false;
+	waitingForAckStopThinking = false;
+	waitingForComputerMove = false;
+	nextDisplayTime = system_time();
+	timeQuantum = MEDIUM_SPEED;
+	pendingMove = NULL;
+	doingPulse = false;
+	SetPulseRate(100000);
+	theDisplayPlayer = RED_PLAYER;
+	redPlayerType = HUMAN_PLAYER; bluePlayerType = RANDOM_PLAYER;									
+	showingExplosion = false;
+	doneDisplaying = true;
+	soundOn = true;
+	isToroidal = false;
+	isOpenGL = false;
+	GenerateMove();
+}
 
-void CMassApplication::LoadSoundsAndImages()											//	function to load the sounds
-	{
-	long i;																				//	loop index
-	app_info CMAppInfo;																	//	used for finding where the application is
-	BEntry CMEntry;																		//	entry in database representing the app
-	BFile CMFile;																		//	the CMass application file
-	BResources CMResources;																//	the CMass resources
-	status_t errorCode;																	//	used for checking success
-	char *aSound;																		//	a sound loaded
-	size_t soundLength;																	//	length of the sound in bytes
-	void *aPICT;																		//	a picture loaded - typed void b/c picHdl is a Mac type
-	size_t pictLength;																	//	length of the pict in bytes
-	BRect theRect;																		//	used for setting the size of the picts
+
+void CMassApplication::LoadSoundsAndImages()
+{
+	long i;
+	app_info CMAppInfo; //	used for finding where the application is
+	BEntry CMEntry;		//	entry in database representing the app
+	BFile CMFile;		//	the CMass application file
+	BResources CMResources;
+	status_t errorCode;
+	char *aSound;
+	size_t soundLength;
+	void *aPICT;
+	size_t pictLength;
 
 	GetAppInfo(&CMAppInfo);																//	find out where on the disk the app is
 	errorCode = CMEntry.SetTo(&CMAppInfo.ref);											//	convert this to a database entry
@@ -58,28 +60,29 @@ void CMassApplication::LoadSoundsAndImages()											//	function to load the s
 	if (errorCode != B_NO_ERROR)														//	if that didn't work
 		FatalErrorAlert(DIE_BAD_RESOURCES);												//	die gracefully
 	for (i = 0; i < N_SOUNDS; i++)														//	walk through, reading in sounds
-		{
+	{
 		aSound = (char *) CMResources.FindResource(B_RAW_TYPE, i+1000, &soundLength);	//	retrieve the sound
 		if (aSound != NULL)																//	i.e. it was successful
 			theSounds[i] = new CMSound(soundNames[i], aSound, soundLength);				//	create the sound
 		else																			//	oops, it doesn't exist
 			FatalErrorAlert(DIE_BAD_SOUND);												//	die gracefully
-		} // end of for i = 0 to N_SOUNDS
-	theRect.Set(0, 0, CELL_SIZE-1, CELL_SIZE-1);										//	set dimensions of the PICT's
-	for (i = 0; i < N_BITMAPS; i++)														//	walk through, reading in PICTs
+	}
+	
+	for (i = 0; i < N_BITMAPS; i++)
+	{
+		theBitmaps[i].len = 0;
+		theBitmaps[i].bitmap = NULL;
+		aPICT = CMResources.FindResource('VICN', i+1000, &pictLength);
+		if (aPICT != NULL)
 		{
-		theBitmaps[i] = NULL;															//	one at a time
-		aPICT = CMResources.FindResource('PICT', i+1000, &pictLength);					//	retrieve the picture
-		if (aPICT != NULL)																//	i.e. it was successful
-			{
-			theBitmaps[i] = new BBitmap(theRect, B_COLOR_8_BIT);						//	make a new bitmap with it
-			theBitmaps[i]->SetBits(aPICT, pictLength, 0, B_COLOR_8_BIT);				//	and set the pixels
-			free(aPICT);																//	free up the memory
-			} // end of aPICT != NULL
-		else																			//	oops, it doesn't exist
-			FatalErrorAlert(DIE_BAD_PICT);												//	die gracefully
-		} // end of for i = 0 to N_BITMAPS
-	} // end of LoadSoundsAndImages()
+			theBitmaps[i].bitmap = (char*)aPICT;
+			theBitmaps[i].len = pictLength;
+		}
+		else
+			FatalErrorAlert(DIE_BAD_PICT);
+	}
+}
+
 
 void CMassApplication::FatalErrorAlert(char *message)									//	sets up an alert, then dies
 	{
@@ -90,6 +93,7 @@ void CMassApplication::FatalErrorAlert(char *message)									//	sets up an aler
 	moribund->Go();																		//	run it & wait for it to return
 	Quit();																				//	then crash out of the application
 	} // end of FatalErrorAlert()
+
 
 void CMassApplication::MessageReceived(BMessage *theEvent)								//	responds to event messages
 	{

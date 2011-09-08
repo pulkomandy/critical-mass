@@ -6,33 +6,41 @@
 
 #include "CMassWindow.h"
 
-CMassWindow::CMassWindow(BRect frame, BBitmap **theBitmaps)							//	constructor
-				: BWindow(frame, "Critical Mass", B_TITLED_WINDOW, B_NOT_RESIZABLE)	//	calls inherited constructor
-	{																		
-	BRect viewRect;																	//	used for setting sizes
-	viewRect.Set(0, 20, 383, 340);													//	set to a suitable size for the board
-	theView = new CMassView(viewRect, "Critical Mass View", theBitmaps);			//	initialize the board view
-	AddChild(theView);																//	add the view as a child to this window
-	viewRect.Set(0, 0, 383, 20);													//	set the size of the menu bar
+CMassWindow::CMassWindow(BRect frame, struct picture *theBitmaps)							//	constructor
+	: BWindow(frame, "Critical Mass", B_TITLED_WINDOW, 0)
+{	
+	BRect viewRect;																	
+	viewRect.Set(Bounds().left, Bounds().top, Bounds().right, 0);
 	theMenuBar = new CMassMenuBar(viewRect, "Critical Mass Menu Bar");				//	initialize the menu bar
-	AddChild(theMenuBar);															//	add the menu to the window
-	theMenuBar->AttachedToWindow();													//	and tell it that it is attached
-	viewRect.Set(0, 340, 383, 370);													//	set the rect size for status bar
-	theStatusBar = new BStatusBar(viewRect, "GedankenBar", NULL, NULL);				//	create the status bar
-	theStatusBar->SetMaxValue(100.0);												//	set the maximum size of the bar
-	AddChild(theStatusBar);															//	connect up the status bar
-	} // end of CMassWindow constructor
+	AddChild(theMenuBar);
+	
+	viewRect.Set(Bounds().left, Bounds().bottom - 32, Bounds().right, Bounds().bottom);
+	theStatusBar = new BStatusBar(viewRect, "GedankenBar", NULL, NULL);
+	theStatusBar->SetResizingMode(B_FOLLOW_BOTTOM|B_FOLLOW_LEFT_RIGHT);
+	theStatusBar->SetMaxValue(100.0);
+	AddChild(theStatusBar);	
+	
+	viewRect.Set(Bounds().left, theMenuBar->Frame().bottom, Bounds().right, theStatusBar->Frame().top);
+	theView = new CMassView(viewRect, "Critical Mass View", theBitmaps);			//	initialize the board view
+	AddChild(theView);
+	
+	ResizeBy(- theView->marginx(), 2 - theView->marginy());
+	
+	SetSizeLimits(Bounds().Width(), 9999, Bounds().Height(), 9999);
+}
+
 
 bool CMassWindow::QuitRequested()													//	called when app wants to quit
-	{
+{
 	be_app->PostMessage(B_QUIT_REQUESTED);											//	ask the app to quit
 	return(TRUE);																	//	and say it's OK by us
-	} // end of QuitRequested()
+}
+
 
 void CMassWindow::MessageReceived(BMessage *theEvent)								//	responds to event messages
-	{
+{
 	switch (theEvent->what)															//	just a big switch statement
-		{
+	{
 		case CM_MSG_ACCEPT_CLICKS:													//	tells view to accept clicks
 		case CM_MSG_REJECT_CLICKS:													//	tells view to reject clicks
 		case CM_MSG_SHOW_BOARD:														//	tells the view to show a board
@@ -53,7 +61,7 @@ void CMassWindow::MessageReceived(BMessage *theEvent)								//	responds to even
 		}
 		case CM_MAKE_STATUS_BAR_RED:												//	tells the window to make status bar red
 		{
-			rgb_color red_colour = {255, 0, 0, 0};									//	set the colour
+			rgb_color red_colour = {0xDC, 0x46, 0x46, 0};									//	set the colour
 			theStatusBar->SetBarColor(red_colour);									//	do it
 			theStatusBar->SetText("Thinking . . .");								//	set the message
 			break;
@@ -61,7 +69,7 @@ void CMassWindow::MessageReceived(BMessage *theEvent)								//	responds to even
 
 		case CM_MAKE_STATUS_BAR_BLUE:												//	tells the window to make status bar blue
 		{
-			rgb_color blue_colour = {0, 0, 255, 0};									//	set the colour
+			rgb_color blue_colour = {0x46, 0x46, 0xDC, 0};									//	set the colour
 			theStatusBar->SetBarColor(blue_colour);									//	do it
 			theStatusBar->SetText("Thinking . . .");								//	set the message
 			break;

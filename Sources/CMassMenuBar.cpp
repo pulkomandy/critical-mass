@@ -16,14 +16,14 @@ CMassMenuBar::CMassMenuBar(BRect frame, char *name)								//	constructor
 
 	//	Game menu
 	aMenu = new BMenu("Game", B_ITEMS_IN_COLUMN);								//	initialize a menu
-	theMenuItem = new BMenuItem("About Critical Mass", new BMessage(AboutCMItem), 'A', NULL);
+	theMenuItem = new BMenuItem("About Critical Mass", new BMessage(AboutCMItem), 'A', 0);
 	aMenu->AddItem(theMenuItem);
 	aMenu->AddSeparatorItem();												//	add a separator
-	theMenuItem = new BMenuItem("New Game", new BMessage(NewGameItem), 'N', NULL);
+	theMenuItem = new BMenuItem("New Game", new BMessage(NewGameItem), 'N', 0);
 	aMenu->AddItem(theMenuItem);
-	theMenuItem = new BMenuItem("Take Back Move", new BMessage(TakeBackItem), 'T', NULL);
+	theMenuItem = new BMenuItem("Take Back Move", new BMessage(TakeBackItem), 'T', 0);
 	aMenu->AddItem(theMenuItem);
-	theMenuItem = new BMenuItem("Quit", new BMessage(QuitItem), 'Q', NULL);
+	theMenuItem = new BMenuItem("Quit", new BMessage(QuitItem), 'Q', 0);
 	aMenu->AddItem(theMenuItem);
 	AddItem(aMenu);														//	add this menu to the menu bar
 	aMenu->SetTargetForItems(be_app);											//	be paranoid & tell the last menu as well

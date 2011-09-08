@@ -3,7 +3,6 @@
 #pragma once	
 #define SUICIDE_NOTE "Critical Mass Suicide Note\n\nAlas, poor me!\n\nSomething went wrong, and I must expiate my sins!\n\n"
 
-#include "CMassWindow.h"
 #include "CMassView.h"
 #include "CMSound.h"
 #include "CMGameTurnStack.h"
@@ -15,6 +14,14 @@
 #define BOOM_1_SOUND 1
 #define BOOM_2_SOUND 2
 
+class CMassWindow;
+
+struct picture
+{
+	char* bitmap;
+	int len;	
+};
+
 class CMassApplication : public BApplication 									//	our application class
 	{
 	public:
@@ -23,7 +30,7 @@ class CMassApplication : public BApplication 									//	our application class
 	private:
 	CMassWindow *theCMWindow;													//	the window for the application
 	CMSound *theSounds[N_SOUNDS];												//	the sounds to play
-	BBitmap *theBitmaps[N_BITMAPS];												//	cache for the bitmaps
+	picture theBitmaps[N_BITMAPS];	// Stored as HVIF code (rendered as needed)
 	CMBrain theCMBrain;															//	the brain that does all the thinking
 	
 	bool waitingForAckRejectClicks;												//	whether we are waiting for an ACK

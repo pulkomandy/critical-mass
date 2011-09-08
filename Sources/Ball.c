@@ -70,7 +70,7 @@ void Ball_HideResult(BallData *ball)
 /* Using vDown, vNow, dragging, and axisSet, compute rotation etc. */
 void Ball_Update(BallData *ball)
 {
-    int i, setSize = ball->setSizes[ball->axisSet];
+    int setSize = ball->setSizes[ball->axisSet];
     HVect *set = (HVect *)(ball->sets[ball->axisSet]);
     ball->vFrom = MouseOnSphere(ball->vDown, ball->center, ball->radius);
     ball->vTo = MouseOnSphere(ball->vNow, ball->center, ball->radius);
@@ -171,7 +171,7 @@ void Ball_DrawConstraints(BallData *ball)
 {
     ConstraintSet set;
     HVect axis;
-    int j, axisI, setSize = ball->setSizes[ball->axisSet];
+    int axisI, setSize = ball->setSizes[ball->axisSet];
     if (ball->axisSet==NoAxes) return;
     set = ball->sets[ball->axisSet];
     for (axisI=0; axisI<setSize; axisI++) {
