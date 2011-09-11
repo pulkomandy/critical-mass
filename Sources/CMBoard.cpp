@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 CMBoard::CMBoard(int NRows, int NCols, int CornerWeight, int EdgeWeight, int CentreWeight)
-	{																//	default constructor
+{																//	default constructor
 	int i, j;															//	loop indices
 	nRows = NRows; nCols = NCols;											//	set the # of rows & cols
 	cornerWeight = CornerWeight; edgeWeight = EdgeWeight; centreWeight = CentreWeight;
@@ -23,10 +23,10 @@ CMBoard::CMBoard(int NRows, int NCols, int CornerWeight, int EdgeWeight, int Cen
 	explosionStack = new int[2*nRows*nCols];								//	prepare a stack for storing explosions as r, c pairs
 	stackSize = 0;														//	and set the stackSize
 	torusWrap = false;													//	set initial torusWrap value
-	} // end of CMBoard default constructor
+}
 
 CMBoard::CMBoard(const CMBoard &theBoard)										//	copy constructor
-	{
+{
 	int i, j;															//	loop indices
 	nRows = theBoard.nRows; nCols = theBoard.nCols;							//	set the # of rows & cols
 	cornerWeight = theBoard.cornerWeight; edgeWeight = theBoard.edgeWeight; 
@@ -34,27 +34,27 @@ CMBoard::CMBoard(const CMBoard &theBoard)										//	copy constructor
 	torusWrap = theBoard.torusWrap;										//	copy the toroidality
 	bombs = (int **) malloc(sizeof(int *)*nRows);							//	create the array of bombs
 	for (i = 0; i < nRows; i++)											//	loop through rows
-		{
+	{
 		bombs[i] = new int[nCols];										//	create the row
 		for (j = 0; j < nCols; j++)										//	and cells
 			bombs[i][j] = theBoard.bombs[i][j];							//	copying from the old board
-		} // end of loop creating rows
+	}
 	explosionStack = new int[nRows*nCols];									//	prepare a stack for storing explosions
 	stackSize = 0;														//	and set the stackSize
-	} // end of CMBoard copy constructor
+}
 		
 CMBoard::~CMBoard()														//	destructor
 	{
-	for (int i = 0; i < nRows; i++) free(bombs[i]);							//	get rid of the rows
+	for (int i = 0; i < nRows; i++) delete[] bombs[i];							//	get rid of the rows
 	free(bombs);														//	get rid of the array of bombs
-	delete explosionStack;												//	get rid of the explosion stack
+	delete[] explosionStack;												//	get rid of the explosion stack
 	} // end of destructor
 
 CMBoard &CMBoard::operator =(const CMBoard &theBoard)								//	assignment (copy) operator
-	{
+{
 	int i, j;															//	loop indices
 	if ((nRows != theBoard.nRows) || (nCols != theBoard.nCols))					//	set the # of rows & cols
-		{
+	{
 		if (bombs != NULL) 												//	get rid of any allocation
 			{
 			for (i = 0; i < nRows; i++) delete bombs[i];						//	get rid of the rows
@@ -64,7 +64,7 @@ CMBoard &CMBoard::operator =(const CMBoard &theBoard)								//	assignment (copy
 		for (i = 0; i < nRows; i++) bombs[i] = new int[nCols];					//	create the rows
 		if (explosionStack != NULL) delete explosionStack;					//	get rid of any allocation
 		explosionStack = new int[nRows*nCols];								//	prepare a stack for storing explosions
-		} // end of case where we have to adjust sizes
+	} // end of case where we have to adjust sizes
 	torusWrap = theBoard.torusWrap;										//	copy the toroidality
 	cornerWeight = theBoard.cornerWeight; edgeWeight = theBoard.edgeWeight; 
 	centreWeight = theBoard.centreWeight;								//	set the weighting factors
@@ -73,7 +73,7 @@ CMBoard &CMBoard::operator =(const CMBoard &theBoard)								//	assignment (copy
 			bombs[i][j] = theBoard.bombs[i][j];							//	copying from the old board
 	stackSize = 0;														//	and set the stackSize
 	return *this;														//	and pass the result on
-	} // end of copy operator
+} // end of copy operator
 	
 bool CMBoard::IsLegalMove(int r, int c, int player)							//	test to see if a move is legal
 	{

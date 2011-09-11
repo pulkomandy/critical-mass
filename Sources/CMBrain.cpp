@@ -73,10 +73,10 @@ void CMBrain::MessageReceived(BMessage *theEvent)									//	responds to event m
 			status_t errCode;												//	catches error codes
 			errCode = theEvent->FindPointer("thinkBoard", &(void*)sentBoard);				//	retrieve the board
 			if (errCode != B_NO_ERROR)										//	if it failed
-				{
+			{
 				be_app->PostMessage(CM_MSG_CANT_MAKE_MOVE);						//	complain
 				break;
-				} // end of no board
+			} // end of no board
 			theBoard = *sentBoard;											//	make a local copy
 			delete sentBoard;												//	and delete the dynamic one
 			errCode = theEvent->FindInt32("player", &player);						//	retrieve the player

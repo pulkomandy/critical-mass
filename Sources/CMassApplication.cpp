@@ -140,11 +140,11 @@ void CMassApplication::MessageReceived(BMessage *theEvent)								//	responds to
 			if (waitingForComputerMove)													//	if we're already waiting
 				break;
 			if (pendingMove != NULL)													//	if there is a move already pending
-				{
+			{
 				PostMessage(pendingMove);												//	post the pending move to the queue
 				delete pendingMove;														//	delete the message
 				pendingMove = NULL;														//	and reset the pointer
-				} // end of case where move pending
+			}
 			else
 				GenerateMove();															//	otherwise, start getting a move
 			break;
@@ -503,7 +503,7 @@ void CMassApplication::CancelThinking()													//	cancel any thinking
 	waitingForComputerMove = false;														//	we're no longer interested
 	waitingForAckRejectClicks = true;													//	set flag saying we're waiting
 	waitingForAckStopThinking = true;													//	in fact, set both
-	if (pendingMove != NULL) delete pendingMove;										//	get rid of any pending move
+	if (pendingMove != NULL) delete pendingMove; pendingMove = NULL;					//	get rid of any pending move
 	theCMBrain.PostMessage(CM_MSG_STOP_THINKING);										//	cancel any pending thought
 	theCMWindow->PostMessage(CM_MSG_REJECT_CLICKS);										//	switch off clicks
 	theCMWindow->PostMessage(CM_RESET_STATUS_BAR);										//	switch off clicks

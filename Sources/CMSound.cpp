@@ -5,20 +5,13 @@
 #define AUDIO_SUBSCRIPTION_FAILED SUICIDE_NOTE"I couldn't connect to the audio server"
 
 CMSound::CMSound(char *soundName, char *newSoundData, long soundLength)	
-									//	constructor that takes 
-									//	a pointer to the sound data
-	{
+	//	constructor that takes a pointer to the sound data
+{
 	theSoundData = framePointer = newSoundData;
 									//	point them both to the sound
 	tailEnd = theSoundData + soundLength;	//	set a sentinel to stop it
 	alreadyPlaying = new CMSemaphore(soundName);
 									//	create a semaphore for mutex access
-	//TODO the_audio_stream = new BDACStream();	//	create a stream
-	// TODO Subscribe(the_audio_stream);			//	subscribe to it
-	//TODO the_audio_stream->SetSamplingRate(8000);
-									//	set our sound parameters
-     // TODO the_audio_stream->SetStreamBuffers(B_PAGE_SIZE, 8);
-     								//	set the size of buffer & how many to use
      								
     media_raw_audio_format format;
 	format = media_raw_audio_format::wildcard;
@@ -29,9 +22,8 @@ CMSound::CMSound(char *soundName, char *newSoundData, long soundLength)
 	format.buffer_size = B_PAGE_SIZE;
 	
 	the_audio_stream = new BSoundPlayer(&format, soundName, play_buffer, NULL, this);
-	the_audio_stream->SetVolume(1.0f);
-     								
-     } // end of CMSound constructor	
+	the_audio_stream->SetVolume(0.1f);
+}
 	
 CMSound::~CMSound()						//	destructor - releases the sound
 	{

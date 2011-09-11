@@ -21,7 +21,7 @@
 #define DEFAULT_CENTRE_WEIGHT 1
 
 class CMBoard												//	class encapsulating game board
-	{
+{
 	public:
 	int nRows, nCols;										//	the # of rows & columns
 	int **bombs;											//	the array holding the bombs
@@ -57,4 +57,4 @@ class CMBoard												//	class encapsulating game board
 	
 	void Print();											//	prints board to std out
 	void MakeToroidal(bool isToroidal = true);					//	switch to toroidal version
-	}; // end of class CMBoard
+}; // end of class CMBoard
