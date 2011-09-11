@@ -1,29 +1,554 @@
 <html>
 <head>
 <title>Critical Mass 2.0</title>
+
+<style type="text/css" media="screen">
+
+.menu {
+	background-color: #888;
+	width: 100%;
+	text-align: center;
+	margin: 1em;
+}
+
+.menu ul
+{
+	display: block;
+	padding: 0px;
+	margin: 0px;
+}
+
+.menu ul li
+{
+	display: inline;
+	background: #CCC;
+	border: 1px solid black;
+	margin: 2em;
+	padding: 3px;
+}
+
+.menu ul li a
+{
+	text-decoration: none;
+	color: #500;	
+}
+
+.entry
+{
+	display: none;
+	clear:both;
+}
+
+#index
+{
+	text-align: center;
+}
+
+img
+{
+	margin: 5px;
+}
+</style>
 </head>
-<body bgcolor="#FFFFFF">
-<table>
-<p align=center>
-<font size=5>Critical Mass 2.0</font><br>
-<br>By Hamish Carr and Adrien Destugues
-<br>
-<br><img src="pictures/CMassWindow.jpg" alt="CMassWindow.jpg">
-<br>
-<br>Come and blow some things up!  
-<br>
-<br>
-Index<br>
-<a href="whatsnew.html">What's New</a><br>
-<a href="background.html">Background</a><br>
-<a href="description.html">Description</a><br>
-<a href="quickstart.html">Quick Start</a><br>
-<a href="interface.html">Interface</a><br>
-<a href="game_rules.html">Game Rules</a><br>
-<a href="strategy.html">Strategy</a><br>
-<a href="revhist.html">Revision History</a><br>
-<a href="code.html">The Code</a><br>
-<a href="credits.html">Credits</a><br>
+
+<body>
+<h1>Critical Mass 2.1</h1>
+
+<div class="menu" style="float:left">
+<ul style="margin-left: -4em; margin-bottom: 0.8em;">
+<li><a href="?whatsnew">What's New</a></li>
+<li><a href="?background">Background</a></li>
+<li><a href="?description">Description</a></li>
+<li><a href="?quickstart">Quick Start</a></li>
+<li><a href="?interface">Interface</a></li>
+</ul><ul style="margin-left: 4em;">
+<li><a href="?game_rules">Game Rules</a></li>
+<li><a href="?strategy">Strategy</a></li>
+<li><a href="?revhist">Revision History</a></li>
+<li><a href="?code">The Code</a></li>
+<li><a href="?credits">Credits</a></li>
+</div>
+
+<div id="index" class="entry">
+<p>By Hamish Carr and Adrien Destugues</p>
+<img src="pictures/CMassWindow.png" alt="CMassWindow">
+<p>Come and blow some things up!</p>
+</div>
+
+<div id="whatsnew" class="entry">
+<h2>New in version 2.1</h2>
+<ul>
+	<li>Replace bitmap graphics with truecolor vector ones.</li>
+	<li>Make the window resizeable</li>
+	<li>More fixes to the UI</li>
+	<li>New documentation system</li>
+</ul>
+<p>See the <a href="?revhist">revision history</a> for known bugs and todo list.</p>
+</div>
+
+<div id="background" class="entry">
+<h2>Some words by Hamish Carr</h2>
+<p>At the University of Manitoba, the second-year Computer Science class is often
+assigned a game as the major project for the Algorithms and Data Structures course.
+The aim of the exercise is to force the students to code a non-trivial, but manageable,
+project involving complex data structures.</p>
+<p>When I took the course in 1996, Prof. Al Marshall assigned Critical Mass as the year's
+game, and provided us with a sample implementation that he had found on the web.</p>
+<p>We were not expected to do a fully-fledged GUI.  Some of us did anyway.  In the
+process, I learned how to code a System 7-compliant application on the Mac.</p>
+<p>When the name and the rules were described to me, I knew that my version had to
+involve nuclear physics, so I shanghaied J Waschuk into creating suitable artwork for
+the game.  (Hey, the assignment was to <b>code</b> the game, not to draw the pieces!)</p>
+<p>Later that same year, when Java was new on the block, some friends and I attempted to
+port Critical Mass to Java.  We succeeded (mostly), but had severe problems making sure
+that the pictures and sounds loaded in the right sequence, and ended up with no very high
+opinion of Java (especially the 1.0 JDK).</p>
+<p>When I started working on the BeOS, and registered as a developer, I decided to port
+Critical Mass to BeOS as an exercise in learning the BeOS API.</p>
+<p>Eight months later, I completed it, and posted it to BeWare.</p>
+<p>Rumour has it that, shortly thereafter, it was banned from Be's headquarters, due to
+it's addictive qualities.  Whether that is true or not, quite a few people at the
+Spring Developers' Conference seemed to recognize it. :-&gt;</p>
+<p>After some difficulty with resource formats, more difficulty finding a Pentium box
+to compile on, and lots of schoolwork, I have finally got round to compiling an
+Intel version, and documenting it.</p>
+
+<h2>Some words by Adrien Destugues</h2>
+<p>While looking through the files in the
+<a href="http://pulkomandy.lexinfo.fr/~beosarchive">BeOS Archive</a>, I found a file
+called "Critical Mass". That looked quite intriguing, so I opened it and discovered a
+game that looked like fun. Unfortunately, it was a BeOS R3 application, and wouldn't run
+on a modern Haiku install. The source was included, however, so I decided to give the
+game a bit of my time and make it work on Haiku.</p>
+<p>Turs out this game is highly addictive, and as I ended up playing it a lot, I decided
+to replace the graphics by vector ones, that I think look a lot nicer. Thanks to zuMi for
+drawing the nuclear explosion, since we didn't have any fitting icon in Haiku library.
+I fixed some parts of the sourcecode to make it work on Haiku and I hope you'll enjoy
+playing with it!</p>
+</div>
+
+<div id="description" class="entry">
+<h2>Description</h2>
+<p>Deep in the heart of a nuclear reactor, a chain reaction is building.
+Two rare elements, stablium and unstablium, are being created.  Your task, should
+you decide to accept it, is to make sure that only stablium (the red one) remains at
+the end of your shift.  And we both know that, if you've read this far, you're going
+to give it a try.</p>
+
+<div align="center">
+<img src="pictures/stabliumunstablium.png" alt="Stablium (red) and Unstablium (blue)">          
+<p>Stablium and Unstablium</p>
+</div>
+
+<p>Due to the peculiar nature of quantum physics, you need only click on an observation
+chamber in the reactor to ensure that the next atom of stablium is created in it.
+After all, the act of observation affects the system you're observing.</p>
+
+<div align="center">
+<img src="pictures/observing.png" alt="observation">
+<p>You, in the act of observing.</p>
+</div>
+
+<p>Unfortunately, stablium and unstablium are peculiar, even by the standards of
+quantum physics.  Once an atom of stablium has been created, you cannot create another
+until an atom of unstablium has been created.  Worse yet, every atom corresponds to
+another atom in a parallel universe.  And, in this parallel universe, ruthless
+machines are attempting to use the stablium/unstablium duality to blow up the
+nuclear reactor, causing a rift in the fabric of space-time, and all kinds of
+cheap 50's-style sci-fi effects, such as the total destruction of the universe as we
+know it.  So you can expect interference with your otherwise tame workshift, as the
+computer attempts to flood the world with unstablium, and you bravely attempt to hold
+back the onslaught.</p>
+
+<div align="center">
+<img src="pictures/bad_result.png" alt="bad_result.png">
+<p>The reactor,<br />just before causing a rift in space-time.</p>
+</div>
+
+<p>In case that wasn't bad enough, once the first two atoms have been created, more
+will continue to be created until only one type remains.  So you can't just shut down
+the reaction.  Well, actually, you can, but quitting is no fun.</p>
+
+<p>How can you get rid of unstablium, when it keeps getting created?  Well, remember
+that you are in a nuclear reactor, where chain reactions are the order of the day.
+All you have to do is to overload one observation cell.  This causes the cell to blow
+up, throwing stablium atoms into adjacent cells, potentially causing a chain reaction.
+Simple, huh?</p>
+
+<div align="center">
+<img src="pictures/explosions.png" alt="explosions">
+<p>Just another day at the nuclear plant.</p>
+</div>
+
+<p>For details on how these explosions work, see the <a href="?game_rules">Game Rules</a>
+page.</p>
+</div>
+
+
+<div id="quickstart" class="entry">
+<h2>Quick start</h2>
+<p>To play Critical Mass, just double-click on the executable.  It can be moved around
+freely, as it contains all the resources it needs.  Please do not distribute it without
+this documentation.</p>
+<p>For a quick description of how to play, see the
+<a href="description.html">Description</a> page.</p>
+<p>For more details on how the game works, see the about box in the game, the help
+windows, or the <a href="game_rules.html">Game Rules</a> page.</p>
+<p>For a description of what the menu options do, see the
+<a href="interface.html">Interface</a> page.</p>
+<p>For some hints on strategy, see the <a href="strategy.html">Strategy</a> page.</p>
+</div>
+
+<div id="interface" class="entry">
+<p>When it is your turn, click on a cell to place the next atom.
+The computer player will respond by placing another atom.  If no explosions are
+caused by the computer's move, don't be surprised if you don't see the move.
+If this happens, just make your next move anyway.</p>
+<p>You will also notice a status bar at the bottom of the window.  When playing against
+A.I. or Bill Kocay opponents, this bar shows approximately how much thinking the
+computer has done for its next move.  You will probably notice that it starts thinking
+before your explosions have finished.</p>
+<img src="pictures/status_bar.png" alt="status_bar.png">
+<p>Other than that, most game options are on the menus.  So here are the menus,
+with a description of what each item does.</p>
+<h2>Game Menu:</h2>
+<img src="pictures/game_menu.png" alt="game_menu.jpg"><br>
+<dl>
+	<dt>About Critical Mass:</dt><dd>Hmmm.  I wonder what this does?</dd>
+	<dt>New Game:</dt>
+		<dd>Starts a new game, abandoning any game in progress.</dd>
+	<dt>Take BackMove:</dt>
+	<dd>Warps back in time and undoes the last move you just did. This may be helpful sometimes.</dd>
+	<dt>Quit:</dt>
+		<dd>Self-explanatory, I hope!</dd>
+</dl>
+<h2>Red and Blue Menus:</h2>
+<img src="pictures/red_blue_menus.png" alt="red_blue_menus.jpg">
+<p>These menus set what kind of players are in the game.</p>
+<dl>
+	<dt>Human:</dt><dd>If you set both players to "Human", you can blow your friends
+	up.  Or they can blow you up.  It depends on who is listening to those voices from
+	another dimension, doesn't it?</dd>
+	<dt>Random: </dt><dd>
+		A computer brain that picks moves at random.  Makes for an easy shift at
+		the nuclear plant.</dd>
+	<dt>Smart: </dt><dd>
+		Up against a computer that is probing for an entrance to this universe.
+		But hey, it must have been programmed by Bill Gates, because you can still
+		beat it.</dd>
+	<dt>A.I.: </dt><dd>
+		In the alternate universe, A.I. doesn't stand for "Artificial Idiocy".
+		Getting tougher to beat . . . </dd>
+	<dt>Bill Kocay: </dt><dd>
+		A robotic hero from the distant past of the other dimension, capable of
+		thinking of many things simultaneously  (i.e. Bill is multi-threaded -
+		watch the blinking lights if you are lucky enough to have a dual or
+		quad processor).  Let me know if you can beat this level without
+		assistance.</dd>
+	<dt>Albert Einstein</dt>
+	<dd>Not only he's very good at thinking, but he also knows all the secrets of
+	quantum physics. (Still multi-threaded, but will think a bit further).
+</dl>
+<h2>Options:</h2>
+<img src="pictures/options_menu.png" alt="options_menu.jpg">
+<dl>
+	<dt>Sound:</dt><dd>Toggles those annoying explosion sounds on/off.</dd>
+	<dt>Fast Display:</dt><dd>
+		Shows the effects of explosions at about 3 frames / second.</dd>
+	<dt>Medium Display:</dt><dd>
+		Shows the effects of explosions at about 2 frames / second.</dd>
+	<dt>Slow Display:</dt><dd>
+		Shows the effects of explosions at about 1 frames / second.</dd>
+	<dt>Wrap around</dt>
+	<dd>In this mode, there are no corners and borders anymore. The top edge is connected
+	to the bottom one, and the left to the right. This means all boxes need 4 protons
+	before exploding.</dd>
+	<dt>Render torus</dt>
+	<dd>Shows the reactor as a torus, like it actually is when playing in wrap around
+	mode.</dd>
+</dl>
+
+<h2>Priority:</h2>
+<img src="pictures/priority_menu.png" alt="priority_menu.jpg">
+<p>When playing against Bill Kocay (the hardest level), the brain is multi-threaded.
+This menu allows you to change the priority assigned to the threads.
+The options provided are the standard priorities in BeOS.</p>
+<p>Please note that you should <b>normally</b> restrict yourself to the top two
+priorities, since game prediction is a classic low-priority, non-interactive task.</p>
+<p>However, for seriously geeky folk, you can set the priority so that the brain
+threads pre-empt all other tasks in the system (such as mouse movement and menus).
+If you attempt to set the priority to one of the "real-time" values (the bottom 3),
+you will get a dialog box warning you that you will slow all other processing down.
+Note that you will <b>not</b> damage anything this way, but you may have to wait for
+the game to finish before doing anything else!</p>
+<img src="pictures/priority_dialog.png" alt="priority_dialog.jpg">
+
+<h2>Help:</h2>
+<img src="pictures/help_menu.png" alt="help_menu.jpg">
+<dl>
+	<dt>About Critical Mass:</dt>
+		<dd>A second link to the about box.</dd>
+	<dt>Game Rules:</dt>
+		<dd>A brief description of the game rules.</dd>
+	<dt>Game Menus:</dt><dd>
+		An equally brief description of the game menus.</dd>
+</dl>
+</div>
+
+
+<div id="game_rules" class="entry">
+<h2>Rules</h2>
+<ol>
+	<li>Players take turns placing single pieces on the game board.
+	<li>Players may only place pieces in empty cells, or cells containing other pieces of their colour.
+	<li>When a cell reaches "critical mass", it explodes immediately, emptying the cell.  Each adjacent cell has one piece added to it, and is converted to the same colour as the piece from the exploding cell.
+	<li>A cell reaches "critical mass" when it contains at least one piece for each adjacent cell.  Therefore:
+	<ul type=circle>
+		<li>Corner cells explode when they have 2 or more pieces in them.
+		<li>Edge cells explode when they have 3 or more pieces in them.
+		<li>Centre cells explode when they have 4 or more pieces in them.
+	</ul>
+	<li>If an explosion causes other cells to reach "critical mass", those cells will explode simultaneously.
+	<li>All explosions are resolved before the opposing player moves.
+	<li>Play continues until one player has been eliminated.
+</ol>
+</div>
+
+
+<div id="strategy" class="entry">
+<h2>Strategy</h2>
+<p>As one rapidly discovers in playing Critical Mass, play is dominated by several factors:
+<ol>
+	<li>Position is unstable:  This is to say that an apparently weak player can (and frequently does) reverse the tables, by detonating a chain reaction that takes over most of the board.
+	<li>The edges and corners are the most important cells to take, as with games such as Reversi (Othello).
+	<li>If you only control a few cells, you will be forced to place more and more pieces in those cells.  When you explode them, your opponent will normally set off a chain reaction that deprives you of the original cell.
+	<li>The results of a move become progressively harder for humans to predict as the game continues.
+	<li>The computer has some difficulty determining good moves early in the game.
+	<li>As a result, humans should concentrate on dominating the game from the beginning.
+</ol>
 </p>
+<p>In addition, some observations can be made about the computer players:
+<ul>
+	<li>All computer players choose randomly between all equally-good moves available
+	to them.</li>
+	<li>The computer players perform simple min-max searches, to the following depths:
+	<ul>
+		<li>Smart:		1 level
+		<li>A.I.:		2 levels
+		<li>Bill Kocay:	4 levels
+	</ul>
+	With a branching factor that often approaches 30, this is ample to keep even a quad-processor machine busy.</li>
+	<li>Computer evaluation of board positions is weighted to emphasize edges and corners.</li>
+	<li>Against the smart level, an effective trap is to leave a corner square open,
+	with two of your pieces in an adjacent square.  When the computer takes the corner
+	square (as it almost always will), explode the cell next door, and take the corner.
+	This is not effective against A.I. (it can see that you will do this, and avoids it).</li>
+	<li>The computer is rather less effective when playing with wrap-around turned on.
+	Or even on the torus.</li>
+</ul>
+</p>
+<p>If you come across consistently effective strategies, please let me know.</p>
+</div>
+
+<div id="revhist" class="entry">
+<p>Nobody sent money when I said it was shareware, so I shan't bother anymore.</p>
+<p>Consider it freeware.  I.e. you can play it, distribute it, throw it in the garbage
+can, whatever, so long as authorship is acknowledged.</p>
+
+<p>Hamish Carr</p>
+
+<h2>Version 2.1 (September, 2011)</h2>
+<ul>
+<li>Replaced all the graphics with HVIF ones</li>
+<li>Made the window resizeable</li>
+<li>Fixed the window layouting</li>
+<li>Changed the drawing code to look a bit nicer</li>
+</ul>
+
+<p>Known bug: the program sometimes crashes when starting a new game. It means you're
+playing too much and should go away and do something else.</p>
+
+<h2>Version 2.0 (July, 2011)</h2>
+<ul>
+<li>Project adopted by Adrien Destugues</li>
+<li>Compiled for Haiku</li>
+<li>Rewrite of the sound code from BeOS R3 media API to the current one</li>
+</ul>
+
+<h2>Version 1.9</h2>
+<ul>
+<li>Complete rewrite of all the bugs.</li>
+<li>Take back moves</li>
+<li>Option for wraparound board.</li>
+<li><p>True toroidal play, courtesy of OpenGL.</p>
+<p>(To rotate the torus, right-click & drag the mouse)</p>
+<p>(To add bombs on the torus, left-click)</p>
+<p>NB:  adding bombs only works when torus in original orientation (see <a href="#bugs">Known Bugs</a>)</p>
+</li>
+</ul>
+
+<h2>Version 1.9 (November, 1998):</h2>
+<ul>
+<li>Major overhaul of the code.  I cleaned up many of the outstanding uglinesses,
+and in fact pretty much rewrote the whole thing.  It is now structured as three
+Loopers talking to each other (the Window, the Application, and the Brain).
+Sub-brains are now BLoopers as well, and killing a deep-thought thread now does
+not leak memory.</li>
+<li>Support for wraparound play now added.  In order to do this, the original C pointer
+walks through the board have been replaced with indices.  Much less efficient,
+and you may notice that it has slowed down.</li>
+<li>Experimental OpenGL support for actual play on the torus.</li>
+<li>Now comes with the ability to take back moves (as many as desired).</li>
+</ul>
+<p>Known bugs:</p>
+<ol>
+	<li>Does not always reset player information properly on Take Back, New Game and change of players:  changing the players again solves it.
+	<li>In OpenGL mode, picking only works properly with the torus in it's original alignment.
+</ol>
+<p>TO DO:</p>
+<ol>
+	<li>Fix the bugs
+	<li>Add variable size playing fields
+	<li>Support Internet play (via BMORB)
+	<li>Add animation of electrons
+	<li>Soundtrack.  Would help if I could write music. . .
+</ol>
+
+<h2>Version 1.01a (July, 1998):</h2>
+<ul>
+<li>Intel version compiled.  The sounds are slightly different, and somewhat
+harsher.  I lost the original sounds, and had to improvise.</li>
+<li>The Intel version seems to have a bug that causes it to crash sporadically.
+If someone can find out why, I would be interested.</li>
+<li>The PPC version frequently crashes when exiting.  I count this as a minor
+nuisance, and haven't bothered tracking down why.</li>
+</ul>
+<h2>Version 1.01 (January, 1998):</h2>
+<p>Features already implemented:</p>
+<ol>
+	<li>Independent threads for display & thinking --> it starts thinking up it's next move while it is still displaying the results of your move.  Semaphores are my friends.  ;-)
+	<li>Minmax lookahead for AI.
+	<li>Heuristic evaluation of boards for all except the Random player
+</ol>
+<p>Features from the Mac version that weren't implemented:</p>
+<ol>
+	<li>Saved games.
+	<li>Move takeback (now done)
+	<li>Unlimited undo/redo/replay
+	<li>Processor hogging (hey - no pre-emptive multitasking on the MacOS - it's a feature, not a bug) (now done)
+	<li>B/W version (I used to have a 21" G/S monitor)
+	<li>Suggested moves
+</ol>
+<p>Features that I *MAY* get round to implementing some day:</p>
+<ol>
+	<li>Alpha-beta pruning:  With a branching factor of 20-30, the top level
+	(a 4-level lookahead) is already slow.  Alpha-beta pruning might let us
+	lookahead 6-levels, but even more slowly.  Oddly, it works better with
+	even lookaheads than odd lookaheads.
+	<li>Brain restarting.  At present, changes to the type of players take
+	effect as of their next move.  I *SHOULD* change it immediately, but I'm feeling
+	lazy
+</ol>
+
+<h3>Known Bugs:	(as of v. 1.0.1)</h3>
+<p>If the program crashes, it should show an alert box with a strange message,
+then die, using the regular BeOS crash alert.  I know what's causing this,
+but since I haven't had it crash yet except when I left stuff out, I don't feel
+inclined to fix it up.</p>
+<p>Bonus trivia question: what does the alert box say, and how do you get it to show
+up?</p>
+<p>When you select "New Game", it kills the other threads:  this means that some
+memory will leak (those threads use pointers to some data structures).
+Again, I'm not inclined to worry about it right now. (now fixed)</p>
+
+<h3>Additions as of Version 1.0.1:</h3>
+<p>Thanks to Markian Hlynka for this idea:</p>
+<p>Added a new menu to allow the user to set the priority assigned to the threads
+that do the thinking at the "Bill Kocay" level.  Use at your own risk!</p>
+<p>Fixed bug in memory allocation when starting up, and fixed MIME type on
+initialization (thanks to J. Watte for finding these).</p>
+
+<h2>Version 1.0	Jan. 10, 1998</h2>
+<p>higher-level brains are now multi-threaded - 5 threads think up the next move, 1 for
+each row.  I guess if someone builds an 8-processor box, I may need to update it.. ;-)</p>
+<p>priority of high-level brain threads reduced to B_LOW_PRIORITY.  This keeps
+the GUI from slowing down elsewhere.  I guess that means that the pop-up menus in the
+Tracker are B_LOW_PRIORITY, eh?</p>
+
+<h2>Version 0.98 Jan. 8, 1998:</h2>
+<p>sound now works</p>
+<p>added status bar for higher level thinkers</p>
+<p>adjusted the right-hand edge of the window slightly</p>
+</div>
+
+
+<div id="code" class="entry">
+<p>Code is now included, for the benefit of those who think it might help them.</p>
+<p>I have included sample projects, for use when recompiling.</p>
+<p>Please note that you will need the included resource files for sounds and pictures.</p>
+<p>If you don't like my commenting habits, too bad. ;-&gt;</p>
+
+<h2>Basic Comments:</h2>
+<p>Much of the code is written more clumsily than I like.  But then, I didn't have
+a clear idea how I was going to adapt it to a multi-threaded system.</p>
+<p>Basically, there are four areas where multi-threading becomes important:
+<ul type=circle>
+	<li>Display:  In addition to the regular BLooper handling the events in the window,
+	there is a second thread that handles spacing out the frames of the explosions.
+	This is handled separately from the events in the window, to permit faster
+	responses to the user.  A set of semaphores and associated flags is used to
+	control when the display thread shows the next set of moves.  No more than one
+	display thread ever exists.</li>
+	<li>Thinking:  Once a move has been decided upon, and the display thread
+	started, a new thread is started to think of the computer's next move.  Again,
+	a set of semaphores controls when it starts and finishes, along with the Pulse()
+	function.  This is one of the major reasons that all changes to the game options
+	are delayed until the next turn.</li>
+	<li>Multi-threaded thinking:  Bill Kocay thinks by starting up one thread for each 
+	row to do the lookahead, then waiting for all the threads to complete.
+	</li>
+	<li>Sounds are played on separate threads, to permit the rest of the game to continue.</li>
+</ul>
+<p>All the sounds and pictures are included as resources in the executable.</p>
+<p>The board is drawn from a set of vector pictures. the whole board is rerendered each
+time from these vector icons. Caching a bitmap rendered version of each of them would
+be faster, but the cache needs to be invalidated each time the window is resized.</p>
+<p>The empty cell also has a picture (drawing nothing), which avoids checking for it
+specifically.</p>
+<p>All the drawing is done in a BBitmap, wich is set as the background for the view.
+The main reason for this is it makes it possible to use the same bitmap when rendering
+on the torus.</p>
+</div>
+
+<div>
+<p>In no particular order:</p>
+<ul>
+	<li>Al Marshall, for the original project
+	<li>Symantec, for Think Pascal (the original compiler)
+	<li>J Waschuk, for the artwork
+	<li>Coca-Cola, for the programming fuel
+	<li>BeOS, for one hell of a fun O/S
+	<li>Metrowerks, for CodeWarrior
+	<li>Markian Hlynka, for the priority menu
+	<li>Bill Kocay, for being sufficiently smart to get on the Player menu
+</ul>
+
+<ul>
+	<li>Michele Frau, for the new set of vector pictures</li>
+	<li>The Haiku team, for a great OS</li>
+	<li>Hamish Carr, for the original sourcecode</li>
+</div>
+
+<script type="text/javascript">
+hu = window.location.search.substring(1);
+
+if (hu)
+{
+	document.getElementById(hu).style.display = "block";
+} else {
+	document.getElementById("index").style.display = "block";
+}
+</script>
+
 </body>
 </html>
