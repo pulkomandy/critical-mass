@@ -56,8 +56,7 @@ void CMBrain::MessageReceived(BMessage *theEvent)									//	responds to event m
 			evalBoard.bombs[row][column] = value;								//	store the value
 			nCellsSearched++;												//	increment search count
 			BMessage *updateMessage = new BMessage(CM_SHOW_PERCENT);				//	create a new message
-			percentDone = (float)nCellsSearched/(theBoard.nRows * theBoard.nCols);	//	divide by the # of cells
-			percentDone *= 100.0;											//	and get as percent
+			percentDone = 1.0;	// One more cell done
 			updateMessage->AddFloat("percent", percentDone);						//	add the value to it
 			be_app->PostMessage(updateMessage);								//	tell the app
 			if (nCellsSearched >= theBoard.nRows*theBoard.nCols)					//	i.e. search is all done
@@ -228,28 +227,26 @@ void CMBrain::EvalMinMax(int thePlayer, int depth)								//	minmax search
 	evalBoard.Reset();														//	zero out evalBoard
 	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
 		for (j = 0; j < theBoard.nCols; j++)									//	and cells
-			{
+		{
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
-				{
+			{
 				testBoard = theBoard;										//	copy the board for testing
 				testBoard.Move(thePlayer, i, j);								//	make the move
 				if (testBoard.HasPlayerWon(thePlayer)) 							//	if that move wipes out the opponent
 					testValue = PLAYER_WIPED_OUT * -thePlayer;					//	search no further
 				else
 					testValue = DeeperMinMax(-thePlayer, testBoard, depth-1);		//	evaluate & store the move
-				}
+			}
 			else															//	otherwise
 				testValue = ILLEGAL_MOVE * thePlayer;							//	say it's illegal (i.e. very bad)
 			evalBoard.bombs[i][j] = testValue;									//	save the test value
 			BMessage *updateMessage = new BMessage(CM_SHOW_PERCENT);				//	create a new message
-			percentDone = (float)(i * theBoard.nCols) + j;						//	compute a percentage
-			percentDone /= (float)(theBoard.nRows * theBoard.nCols);				//	divide by the # of cells
-			percentDone *= 100.0;											//	and get as percent
+			percentDone = 1.0; // One cell more
 			updateMessage->AddFloat("percent", percentDone);						//	add the value to it
 			be_app->PostMessage(updateMessage);								//	tell the app
 //			printf("%d %d %d\n", i, j, testValue);
 //			evalBoard.Print();
-			} // end of loop through cells
+		} // end of loop through cells
 //	printf("Result of evaluation\n");
 //	evalBoard.Print();
 	} // end of EvalMinMax()
@@ -298,7 +295,7 @@ void CMBrain::EvalThreadedMinMax(long thePlayer, long depth)						//	minmax sear
 	whichPlayer = thePlayer;													//	save the player ID for later
 	if (nRows != theBoard.nRows)												//	we have the wrong # of brains
 		{
-		if (rowBrains != NULL) delete rowBrains;								//	get rid of any old copy
+		if (rowBrains != NULL) delete[] rowBrains;								//	get rid of any old copy
 		rowBrains = new CMRowBrain[theBoard.nRows];								//	create new ones
 		nRows = theBoard.nRows;												//	reset the counter
 		for (long i = 0; i < nRows; i++)										//	walk through them

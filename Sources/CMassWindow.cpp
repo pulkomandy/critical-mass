@@ -17,8 +17,10 @@ CMassWindow::CMassWindow(BRect frame, struct picture *theBitmaps)							//	const
 	viewRect.Set(Bounds().left, Bounds().bottom - 32, Bounds().right, Bounds().bottom);
 	theStatusBar = new BStatusBar(viewRect, "GedankenBar", NULL, NULL);
 	theStatusBar->SetResizingMode(B_FOLLOW_BOTTOM|B_FOLLOW_LEFT_RIGHT);
-	theStatusBar->SetMaxValue(100.0);
+	theStatusBar->SetMaxValue(DEFAULT_N_ROWS * DEFAULT_N_COLS);
 	AddChild(theStatusBar);	
+	rgb_color red_colour = {0xDC, 0x46, 0x46, 0};
+	theStatusBar->SetBarColor(red_colour);
 	
 	viewRect.Set(Bounds().left, theMenuBar->Frame().bottom, Bounds().right, theStatusBar->Frame().top);
 	theView = new CMassView(viewRect, "Critical Mass View", theBitmaps);			//	initialize the board view
@@ -49,6 +51,7 @@ void CMassWindow::MessageReceived(BMessage *theEvent)								//	responds to even
 			
 		case CM_RESET_STATUS_BAR:													//	tells the window to reset the status bar
 			theStatusBar->Reset();													//	reset the status bar
+			theStatusBar->SetMaxValue(DEFAULT_N_ROWS * DEFAULT_N_COLS);
 			break;
 
 		case CM_SHOW_PERCENT:														//	tells the window to update percent in status bar
@@ -56,7 +59,7 @@ void CMassWindow::MessageReceived(BMessage *theEvent)								//	responds to even
 			float sentPercent;														//	used to retrieve the value we are sent
 			status_t errCode = theEvent->FindFloat("percent", &sentPercent);		//	retrieve the value
 			if (errCode == B_NO_ERROR)												//	if it was successful
-				theStatusBar->Update(sentPercent - theStatusBar->CurrentValue(), NULL, NULL);
+				theStatusBar->Update(sentPercent, NULL, NULL);
 			break;
 		}
 		case CM_MAKE_STATUS_BAR_RED:												//	tells the window to make status bar red
