@@ -33,8 +33,6 @@ class CMassView : public BGLView													//	our viewing panel
  	float dragOld_x, dragOld_y;														//	previous x, y coordinates of drag							
 	GLuint texName;																	//	name of texture
 	
-	CMBoard* currentBoard;
-
 	void CreateTorus(float ringRadius, float tubeRadius, GLenum mode = GL_RENDER);	//	creates display list for torus
 	public:
 	CMassView(BRect frame, const char *name, struct picture*newBitmaps);

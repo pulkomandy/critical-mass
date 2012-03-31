@@ -197,18 +197,16 @@ void CMassView::MessageReceived(BMessage *theMessage)								//	reacts to messag
 			be_app->PostMessage(response);											//	and send it back
 			break;
 		}
-		case CM_MSG_SHOW_BOARD:														//	the application sent us a board to show
+		case CM_MSG_SHOW_BOARD:
 		{
-			CMBoard *sentBoard;														//	used to retrieve the board we are sent
-			status_t errCode = theMessage->FindPointer("displayBoard", &(void*)sentBoard);	//	retrieve the board
-			if (errCode == B_NO_ERROR)												//	if it was successful
-				{
-				delete currentBoard;
-				theBlitView->theBoard = theBoard = *sentBoard;						//	copy the board to our display board
-				theBlitView->Generate();											//	recreate the blitmap
-				Invalidate();														//	invalidate the whole view to force redraw
-				currentBoard = sentBoard;													//	dispose of the board we were sent
-				} // end of successful board transfer
+			CMBoard *sentBoard;
+			status_t errCode = theMessage->FindPointer("displayBoard", &(void*)sentBoard);
+			if (errCode == B_NO_ERROR)
+			{
+				theBlitView->theBoard = theBoard = *sentBoard;
+				theBlitView->Generate();
+				Invalidate();
+			} // end of successful board transfer
 			break;
 		}
 		case OptionRenderTorusItem:													//	toggle OpenGL mode
@@ -304,8 +302,7 @@ void CMassView::FrameResized(float neww, float newh)
 	BRect bitmapSize = Bounds();
 	theBlitMap = new BBitmap(bitmapSize, B_RGB_32_BIT, true);							//	create blitmap
 	theBlitView = new CMassBlitView(bitmapSize, "BlitView", theBitmaps, theBlitMap);	//	create the blitview
-	if (currentBoard)
-		theBlitView->theBoard = *currentBoard;
+	theBlitView->theBoard = theBoard;
 	// TODO ? set this to true in OpenGL mode ? (and use a 512x512 rect ?)
 	theBlitView->isOpenGL = false;													//	and start in OpenGL mode
 	theBlitMap->AddChild(theBlitView);												//	add the blitview to the blitmap
