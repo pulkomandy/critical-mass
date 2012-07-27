@@ -2,7 +2,8 @@
 //	started 12/7/1997
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMBOARD_H__
+#define __CMBOARD_H__
 
 #define DEFAULT_N_ROWS 5
 #define DEFAULT_N_COLS 6
@@ -23,7 +24,6 @@
 class CMBoard												//	class encapsulating game board
 {
 	public:
-	int nRows, nCols;										//	the # of rows & columns
 	int **bombs;											//	the array holding the bombs
 														//	note:  +ve is blue, -ve is black
 	int *explosionStack;									//	stack for tracking explosions
@@ -31,16 +31,23 @@ class CMBoard												//	class encapsulating game board
 	int cornerWeight, edgeWeight, centreWeight;					//	weights for various positions
 	bool torusWrap;										//	whether to wrap board (ala torus)
 
+	private:
+		int nRows, nCols;
+
 	public:
-	CMBoard(int NRows = DEFAULT_N_ROWS, int NCols = DEFAULT_N_COLS,	//	default constructor
-		int CornerWeight = DEFAULT_CORNER_WEIGHT, int EdgeWeight = DEFAULT_EDGE_WEIGHT,
+	CMBoard(int NRows = DEFAULT_N_ROWS, int NCols = DEFAULT_N_COLS,
+		int CornerWeight = DEFAULT_CORNER_WEIGHT,
+		int EdgeWeight = DEFAULT_EDGE_WEIGHT,
 		int CentreWeight = DEFAULT_CENTRE_WEIGHT);
-	CMBoard(const CMBoard &theBoard);								//	copy constructor
-	~CMBoard();											//	destructor
+	CMBoard(const CMBoard &theBoard);
+	~CMBoard();
 
-	CMBoard &operator =(const CMBoard &theBoard);						//	assignment (copy) operator
+	CMBoard &operator =(const CMBoard &theBoard);
 
-	void Reset();											//	resets the bombs to empty
+	void Reset();
+
+	inline int getWidth() { return nCols; }
+	inline int getHeight() { return nRows; }
 
 	bool IsLegalMove(int r, int c, int player);					//	test to see if a move is legal
 	int Weight(int r, int c);								//	routine to find the weight of a cell
@@ -57,4 +64,6 @@ class CMBoard												//	class encapsulating game board
 	
 	void Print();											//	prints board to std out
 	void MakeToroidal(bool isToroidal = true);					//	switch to toroidal version
-}; // end of class CMBoard
+};
+
+#endif

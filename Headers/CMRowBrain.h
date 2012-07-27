@@ -2,7 +2,8 @@
 //	11/01/98
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMROWBRAIN_H__
+#define __CMROWBRAIN_H__
 
 #include "CMBoard.h"
 #include "CMGUIDefs.h"
@@ -30,3 +31,5 @@ class CMRowBrain : public BLooper								//	class for threaded thinking
 	void EvalCell();										//	evaluate the next cell for moves
 	int DeeperMinMax(int thePlayer, CMBoard &theBoard, int depth);	//	minmax search
 	}; // end of class CMRowBrain
+
+#endif

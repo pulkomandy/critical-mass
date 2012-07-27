@@ -4,13 +4,18 @@
 
 #include "CMBoard.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 CMBoard::CMBoard(int NRows, int NCols, int CornerWeight, int EdgeWeight, int CentreWeight)
-{																//	default constructor
-	int i, j;															//	loop indices
-	nRows = NRows; nCols = NCols;											//	set the # of rows & cols
+{
+	int i, j;
+	nRows = NRows; nCols = NCols;
+
+	assert(nRows > 0);
+	assert(nCols > 0);
+
 	cornerWeight = CornerWeight; edgeWeight = EdgeWeight; centreWeight = CentreWeight;
 																	//	set the weighting factors
 	bombs = (int **) malloc(sizeof(int *)*nRows);							//	create the array of bombs
@@ -27,8 +32,12 @@ CMBoard::CMBoard(int NRows, int NCols, int CornerWeight, int EdgeWeight, int Cen
 
 CMBoard::CMBoard(const CMBoard &theBoard)										//	copy constructor
 {
-	int i, j;															//	loop indices
-	nRows = theBoard.nRows; nCols = theBoard.nCols;							//	set the # of rows & cols
+	int i, j;
+	nRows = theBoard.nRows; nCols = theBoard.nCols;
+
+	assert(nRows > 0);
+	assert(nCols > 0);
+
 	cornerWeight = theBoard.cornerWeight; edgeWeight = theBoard.edgeWeight; 
 	centreWeight = theBoard.centreWeight;									//	set the weighting factors
 	torusWrap = theBoard.torusWrap;										//	copy the toroidality
@@ -58,16 +67,21 @@ CMBoard &CMBoard::operator =(const CMBoard &theBoard)
 	{
 		if (bombs != NULL)
 		{
-			for (i = 0; i < nRows; i++) delete bombs[i];
+			for (i = 0; i < nRows; i++) delete[] bombs[i];
 			free(bombs);
 		}
+
+		nRows = theBoard.nRows;
+		nCols = theBoard.nCols;
+
+		assert(nRows > 0);
+		assert(nCols > 0);
+
 		bombs = (int **) malloc(sizeof(int *)*nRows);
 		for (i = 0; i < nRows; i++) bombs[i] = new int[nCols];
 		if (explosionStack != NULL) delete explosionStack;
 		explosionStack = new int[nRows*nCols];
 
-		nRows = theBoard.nRows;
-		nCols = theBoard.nCols;
 	}
 	torusWrap = theBoard.torusWrap;
 	cornerWeight = theBoard.cornerWeight; edgeWeight = theBoard.edgeWeight; 

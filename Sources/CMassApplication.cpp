@@ -1,8 +1,11 @@
 //	CMassApplication.cpp
 
 #include "CMassApplication.h"
+
 #include <Resources.h>
 #include <Alert.h>
+
+#include <assert.h>
 
 #include <CMassWindow.h>
 
@@ -274,15 +277,16 @@ void CMassApplication::ReactToIllegalMove()												//	what to do when given 
 	theCMWindow->PostMessage(&acceptClickMessage);										//	post the message
 	} // end of ReactToIllegalMove()
 
-void CMassApplication::ShowAlert(long whichItem)										//	shows an alert for rules, &c.
-	{
-	BAlert *alert;																		//	the alert that we will use
-	long whichAlert;																	//	which box to put up
-	long result;																		//	to retrieve the result
+void CMassApplication::ShowAlert(long whichItem)
+{
+	BAlert *alert;
+	long whichAlert;
+	long result;
 
-	switch(whichItem)																	//	convert to 0..3 index
+	switch(whichItem)
 		{
 		case AboutCMItem:	
+		default:
 			whichAlert = 0; 
 			break;
 		case HelpGameRulesItem:
@@ -291,7 +295,7 @@ void CMassApplication::ShowAlert(long whichItem)										//	shows an alert for 
 		case HelpMenuOptionsItem:
 			whichAlert = 2;
 			break;
-		} // end of switch(whichItem
+		}
 		
 	while (whichAlert != 3)																//	keep going until they hit done
 		switch (whichAlert)																//	switch on which alert to put up
@@ -424,27 +428,32 @@ void CMassApplication::GenerateMove()													//	starts generating the next 
 	long playerType = (theTurn.thePlayer == RED_PLAYER) ? redPlayerType : bluePlayerType;
 //	printf("Starting to think. . . \n");
 	switch (playerType)																	//	depending on the player type
-		{	
+	{	
 		case RANDOM_PLAYER:																//	smart as a sack of hammers
 		case SMART_PLAYER:																//	smarter than a hammer with a headache
 		case AI_PLAYER:																	//	aspiring to village idiot status
 		case BILL_KOCAY_PLAYER:															//	pretty darn good
 		case ALBERT_EINSTEIN_PLAYER:													//	well, hell, I give
 		{
-			CMBoard *sendBoard = new CMBoard(theTurn.startBoard);						//	set the board to be sent
-			BMessage *thinkBoardMessage = new BMessage(CM_MSG_MAKE_MOVE);				//	create a message to send
-			thinkBoardMessage->AddPointer("thinkBoard", sendBoard);						//	brain is responsible for deleting the board
-			thinkBoardMessage->AddInt32("player", theTurn.thePlayer);					//	add the player's ID
-			thinkBoardMessage->AddInt32("playerType", playerType);						//	add the player's type
-			theCMBrain.PostMessage(thinkBoardMessage);									//	post the message
-			delete thinkBoardMessage;													//	and delete it when done
+			CMBoard *sendBoard = new CMBoard(theTurn.startBoard);
+			assert(sendBoard != NULL);
+			BMessage *thinkBoardMessage = new BMessage(CM_MSG_MAKE_MOVE);
+
+			status_t err;
+
+			err = thinkBoardMessage->AddPointer("thinkBoard", sendBoard);
+			assert(err == B_OK);
+			thinkBoardMessage->AddInt32("player", theTurn.thePlayer);
+			thinkBoardMessage->AddInt32("playerType", playerType);
+			theCMBrain.PostMessage(thinkBoardMessage);
+			delete thinkBoardMessage;
 			break;
 		}
-		case HUMAN_PLAYER:																//	ooh, a real live person
-			theCMWindow->PostMessage(new BMessage(CM_MSG_ACCEPT_CLICKS));				//	tell the view that clicks are good
+		case HUMAN_PLAYER:		//	ooh, a real live person
+			theCMWindow->PostMessage(CM_MSG_ACCEPT_CLICKS);
 			break;
-		} // end of switch
-	} // end of GenerateMove()
+	}
+}
 
 void CMassApplication::GenerateComputerMove()											//	same, but does nothing if human
 	{

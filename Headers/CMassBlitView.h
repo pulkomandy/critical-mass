@@ -4,7 +4,8 @@
 //
 //	CMassBlitView.h
 
-#pragma once
+#ifndef __CMASBLITVIEW_H__
+#define __CMASBLITVIEW_H__
 
 #include "CMBoard.h"
 #include "CMGUIDefs.h"
@@ -12,7 +13,7 @@
 #include <View.h>
 
 class CMassBlitView : public BView 													//	our viewing panel
-	{
+{
 	public:	
 	CMBoard theBoard;																//	the board currently being displayed
 	bool isOpenGL;																	//	whether generating for OpenGL
@@ -24,4 +25,6 @@ class CMassBlitView : public BView 													//	our viewing panel
 	CMassBlitView(BRect frame, char *name, struct picture* newBitmaps, BBitmap *newBlitMap);			//	constructor
 	virtual void Draw(BRect updateRect);												//	draw the view
 	void Generate();																//	regenerates the contents of the view
-	}; // end of class CMassBlitView
+};
+
+#endif

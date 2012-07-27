@@ -1,5 +1,7 @@
 //	header file for an autonomous sound that plays itself
-#pragma once
+
+#ifndef __CMSOUND_H__
+#define __CMSOUND_H__
 
 class CMSound;							//	forward declaration
 
@@ -30,4 +32,6 @@ class CMSound
 	friend void play_buffer(void *cookie, void * buffer, size_t size, const media_raw_audio_format & format);
 
 	
-	}; // end of class CMSound
+};
+
+#endif

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(CriticalMass)
-set(CMAKE_CXX_FLAGS "-Wall -Os")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-multichar -Os")
 add_subdirectory(Sources)
 
 get_target_property(CMASS_PATH CriticalMass LOCATION)

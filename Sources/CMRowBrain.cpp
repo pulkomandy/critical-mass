@@ -33,9 +33,10 @@ void CMRowBrain::MessageReceived(BMessage *theEvent)								//	responds to event
 			if (stoppedEarly) break;											//	flush useless searches
 			EvalCell();													//	evaluate the next cell
 			break;			
-		case CM_MSG_CONSIDER_ROW:											//	command to search
+		case CM_MSG_CONSIDER_ROW:
+		{
 			stoppedEarly = false;											//	we haven't been stopped yet
-			CMBoard *sentBoard;												//	used to retrieve the board we are sent
+			CMBoard *sentBoard = NULL;
 			theEvent->FindPointer("thinkBoard", &(void*)sentBoard);						//	retrieve the board
 			theBoard = *sentBoard;											//	make a local copy
 //			if (whichRow == 0)
@@ -44,16 +45,18 @@ void CMRowBrain::MessageReceived(BMessage *theEvent)								//	responds to event
 //				theBoard.Print();
 //				printf("======\n");
 //				}
-			delete sentBoard;												//	and delete the dynamic one
+//			delete sentBoard;												//	and delete the dynamic one
+
 			theEvent->FindInt32("player", &player);								//	retrieve the player
 			theEvent->FindInt32("depth", &whatDepth);							//	retrieve the depth
 			whichCol = 0;													//	start off searching col 0
-			PostMessage(new BMessage(CM_MSG_CONSIDER_CELL));						//	tell ourselves to consider a cell
+			PostMessage(CM_MSG_CONSIDER_CELL);
 			break;
-		default:															//	if we don't recognize it
-			BLooper::MessageReceived(theEvent);								//	call inherited routine
-		} // end of switch
-	} // end of MessageReceived()
+		}
+		default:
+			BLooper::MessageReceived(theEvent);
+		}
+	}
 
 void CMRowBrain::EvalCell()													//	evaluate the next cell for moves
 	{
@@ -85,7 +88,7 @@ void CMRowBrain::EvalCell()													//	evaluate the next cell for moves
 //	if (whichRow == 0) printf("Reporting %d %d %d\n", whichRow, whichCol, value);
 	master->PostMessage(cellValueMessage);										//	send it to our master
 	whichCol++;															//	increment the column
-	if (whichCol < theBoard.nCols)											//	if there are more to search
+	if (whichCol < theBoard.getWidth())											//	if there are more to search
 		PostMessage(new BMessage(CM_MSG_CONSIDER_CELL));							//	tell ourselves to search another				
 	} // end of EvalCell()
 	
@@ -103,8 +106,8 @@ int CMRowBrain::DeeperMinMax(int thePlayer, CMBoard &theBoard, int depth)				//	
 	
 	bestValue = PLAYER_WIPED_OUT * thePlayer;									//	we hope to find something better than this		
 	int i, j;																//	loop indices
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)										//	loop through rows
+		for (j = 0; j < theBoard.getWidth(); j++)									//	and cells
 			{
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
 				{

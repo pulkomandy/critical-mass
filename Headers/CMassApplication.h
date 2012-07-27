@@ -1,7 +1,10 @@
 //	CMassApplication.h
 
-#pragma once	
-#define SUICIDE_NOTE "Critical Mass Suicide Note\n\nAlas, poor me!\n\nSomething went wrong, and I must expiate my sins!\n\n"
+#ifndef __CMAKEAPPLICATION_H__
+#define __CMAKEAPPLICATION_H__
+
+#define SUICIDE_NOTE "Critical Mass Suicide Note\n\nAlas, poor me!\n\n"\
+	"Something went wrong, and I must expiate my sins!\n\n"
 
 #include "CMassView.h"
 #include "CMSound.h"
@@ -71,3 +74,4 @@ class CMassApplication : public BApplication 									//	our application class
 	void ShowAlert(long whichItem);												//	shows an alert for rules, &c.
 	}; // end of class CMassApplication
 
+#endif

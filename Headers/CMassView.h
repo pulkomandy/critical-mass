@@ -4,7 +4,8 @@
 //
 //	CMassView.h
 
-#pragma once
+#ifndef __CMASSVIEW_H__
+#define __CMASSVIEW_H__
 
 #include "CMassBlitView.h"
 #include <GLView.h>
@@ -14,7 +15,7 @@
 const int dragBall = 0, dragObject = 1, dragScale = 2;								//	constants for which form of drag is being performed			
 
 class CMassView : public BGLView													//	our viewing panel
-	{
+{
 	private:	
 	CMBoard theBoard;																//	the board currently being displayed
 	struct picture* theBitmaps;															//	cache for the bitmaps
@@ -46,4 +47,6 @@ class CMassView : public BGLView													//	our viewing panel
 	float marginy() {float h = Bounds().Height(); return h - ((int)h/CELL_SIZE)*CELL_SIZE;}
 	
 	static int CELL_SIZE;
-	}; // end of class CMassView
+};
+
+#endif

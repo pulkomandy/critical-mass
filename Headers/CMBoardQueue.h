@@ -2,7 +2,8 @@
 //	started 12/7/1997
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMBOARDQUEUE_H__
+#define __CMBOARDQUEUE_H__
 
 #include "CMBoard.h"
 
@@ -29,3 +30,5 @@ class CMBoardQueue											//	class with a queue of boards
 
 	void Print();											//	prints queue to std out
 	}; // end of class CMBoardQueue
+
+#endif

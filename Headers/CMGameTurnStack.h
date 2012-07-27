@@ -2,7 +2,8 @@
 //	started 12/7/1997
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMGAMETURNSTACK_H__
+#define __CMGAMETURNSTACK_H__
 
 #include "CMGameTurn.h"
 
@@ -30,3 +31,5 @@ class CMGameTurnStack										//	class with a stack of game turns
 	void MakeToroidal(bool isToroidal = true);					//	resets all items in stack to tori
 	void Print();											//	prints stack to std out
 	}; // end of class CMGameTurnStack
+
+#endif

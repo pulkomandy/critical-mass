@@ -17,7 +17,6 @@ CMassView::CMassView(BRect frame, const char *name, struct picture* newBitmaps)	
 	theBitmaps = newBitmaps;														//	save a pointer to the bitmaps
 	acceptClicks = false;															//	and ignore any clicks
 	inGLMode = false;																//	start off NOT in GL mode
-	BRect theRect(0.0, 0.0, 511.0, 511.0);											//	set a rectangle to the frame
 
 	xRot = 0.6; yRot = 0.8; zRot = 0.0;												//	direction vector for rotation							
 	scale = 25.0;
@@ -109,7 +108,6 @@ void CMassView::Draw(BRect updateRect)												//	draw the view
 
 void CMassView::MouseDown(BPoint where)												//	reacts to mouse clicks
 	{
-	BRect bounds = Bounds();
 	long whichButtons = 1;															//	used for tracking which buttons are down
 	Window()->CurrentMessage()->FindInt32("buttons", &whichButtons);				//	find out which buttons are down
 	
@@ -171,9 +169,9 @@ void CMassView::MouseDown(BPoint where)												//	reacts to mouse clicks
 //			printf("%d %d\n", row, col); return;
 			} // end of GL mode code
 		if (row < 0) return;														//	make sure it is a legal cell
-		else if (row >= theBoard.nRows) return;										//	i.e. not off top or bottom
+		else if (row >= theBoard.getHeight()) return;										//	i.e. not off top or bottom
 		if (col < 0) return;														//	same with left & right
-		else if (col >= theBoard.nCols) return;	
+		else if (col >= theBoard.getWidth()) return;	
 		
 		BMessage *theMessage = new BMessage(CM_MSG_MOVE_CHOSEN);					//	create a message for it
 		acceptClicks = false;														//	turn off "accept clicks"
@@ -199,7 +197,7 @@ void CMassView::MessageReceived(BMessage *theMessage)								//	reacts to messag
 		}
 		case CM_MSG_SHOW_BOARD:
 		{
-			CMBoard *sentBoard;
+			CMBoard *sentBoard = NULL;
 			status_t errCode = theMessage->FindPointer("displayBoard", &(void*)sentBoard);
 			if (errCode == B_NO_ERROR)
 			{
@@ -220,10 +218,11 @@ void CMassView::MessageReceived(BMessage *theMessage)								//	reacts to messag
 		} // end of switch
 	} // end of MessageReceived
 	
-void CMassView::CreateTorus(float ringRadius, float tubeRadius, GLenum mode)		//	set up a list for rendering
-	{
+void CMassView::CreateTorus(float ringRadius, float tubeRadius, GLenum mode)
+{
 	int i, j;
-	int ringDivisions = theBoard.nCols*8, tubeDivisions = theBoard.nRows*8;
+	int ringDivisions = theBoard.getHeight()*8;
+	int tubeDivisions = theBoard.getWidth()*8;
 	GLfloat theta, phi, theta1, phi1, thetaNorm, phiNorm, theta1Norm, phi1Norm;
 	GLfloat p0[03], p1[3], p2[3], p3[3];
 	GLfloat n0[3], n1[3], n2[3], n3[3];

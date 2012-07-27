@@ -22,10 +22,8 @@ CMassBlitView::CMassBlitView(BRect frame, char *name, struct picture* newBitmaps
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	} // end of constructor
 	
-void CMassBlitView::Draw(BRect updateRect)												//	draw the view
+void CMassBlitView::Draw(BRect /*updateRect*/)												//	draw the view
 	{
-	#pragma unused(updateRect)														//	we ignore this
-	int i,j;																		//	loop indices
 	BPoint BombPoint;																//	where to draw the bomb
 	long nBombs;
 	int CELL_SIZE = CMassView::CELL_SIZE;
@@ -33,11 +31,11 @@ void CMassBlitView::Draw(BRect updateRect)												//	draw the view
 	SetDrawingMode(B_OP_OVER);
 
 	// Generate 1 more column and line to make sure we cover the area around the playfield...
-	for (i = theBoard.nRows + 1 ; --i >= 0;)
+	for (int i = theBoard.getHeight() + 1 ; --i >= 0;)
 	{
-		for (int j = theBoard.nCols + 1 ; --j >= 0;)
+		for (int j = theBoard.getWidth() + 1 ; --j >= 0;)
 		{
-			if ((i * theBoard.nRows + j)%2)
+			if ((i * theBoard.getHeight() + j)%2)
 				SetHighColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 			else
 				SetHighColor(tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_1_TINT));
@@ -49,9 +47,9 @@ void CMassBlitView::Draw(BRect updateRect)												//	draw the view
 	SetDrawingMode(B_OP_ALPHA);
 	SetBlendingMode(B_PIXEL_ALPHA, B_ALPHA_OVERLAY);	
 		
-	for (i = 0; i < theBoard.nRows; i++)												//	loop down the rows
+	for (int i = 0; i < theBoard.getHeight(); i++)												//	loop down the rows
 		{
-		for (j = 0; j < theBoard.nCols; j++)											//	walk down the columns
+		for (int j = 0; j < theBoard.getWidth(); j++)											//	walk down the columns
 			{
 			BombPoint.Set((j)*CELL_SIZE, (i)*CELL_SIZE);									//	compute the TL corner of the cell					
 			MovePenTo(BombPoint);													//	move the pen into place

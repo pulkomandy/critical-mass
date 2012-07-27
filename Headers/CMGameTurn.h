@@ -2,7 +2,8 @@
 //	started 12/7/1997
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMGAMETURN_H__
+#define __CMGAMETURN_H__
 
 #include "CMBoard.h"
 
@@ -22,3 +23,5 @@ class CMGameTurn											//	class encapsulating game state
 	void Print();											//	prints state to std out
 	void MakeToroidal(bool isToroidal = true);					//	toggle toroidality
 	}; // end of class CMGameTurn
+
+#endif

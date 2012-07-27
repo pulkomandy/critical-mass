@@ -5,79 +5,83 @@
 #include "CMBrain.h"
 
 #include <Application.h>
+
+#include <assert.h>
 #include <stdlib.h>
 
-CMBrain::CMBrain()															//	default constructor
-	: BLooper("Rodin The Thinker")											//	call inherited constructor
-	{
-	Run();																//	set the looper running
-	rowBrains = NULL;														//	empty unless we need it
-	nRows = 0;															//	we start with no brains ;->
-	doingThreadedSearch = false;												//	say it ain't so
-	storedPriority = B_LOW_PRIORITY;											//	threaded searches are low priority
-	} // end of constructor
+CMBrain::CMBrain()
+	: BLooper("Rodin The Thinker")
+{
+	Run();
+	rowBrains = NULL;
+	nRows = 0;
+	doingThreadedSearch = false;
+	storedPriority = B_LOW_PRIORITY;
+}
 
-CMBrain::~CMBrain()															//	destructor
-	{
-	} // end of destructor
+CMBrain::~CMBrain()
+{
+}
 
-void CMBrain::MessageReceived(BMessage *theEvent)									//	responds to event messages
+void CMBrain::MessageReceived(BMessage *theEvent)
+{
+	switch (theEvent->what)
 	{
-	switch (theEvent->what)													//	big switch statement
-		{
-		case CM_MSG_STOP_THINKING:											//	command to cancel search
-			if (!doingThreadedSearch)										//	if it's a simple search
-				{
-				be_app->PostMessage(CM_MSG_ACK_STOP_THINKING);					//	acknowledge it
+		case CM_MSG_STOP_THINKING:
+			if (!doingThreadedSearch)
+			{
+				be_app->PostMessage(CM_MSG_ACK_STOP_THINKING);
 				break;
-				}
-			for (long i = 0; i < nRows; i++)									//	loop through the brains
-				{
-				set_thread_priority(rowBrains[i].Thread(), B_LOW_PRIORITY);			//	set their priority down
-				rowBrains[i].PostMessage(CM_MSG_ROW_STOP_THINKING);				//	telling them to quit
-				}
-			nDeadBrains = 0;												//	and set the count
+			}
+			for (long i = 0; i < nRows; i++)
+			{
+				set_thread_priority(rowBrains[i].Thread(), B_LOW_PRIORITY);
+				rowBrains[i].PostMessage(CM_MSG_ROW_STOP_THINKING);
+			}
+			nDeadBrains = 0;
 			break;
-		case CM_MSG_ACK_ROW_STOP_THINKING:										//	rowbrain reported in
-			nDeadBrains++;													//	increment count
-			if (nDeadBrains == nRows)										//	if all accounted for
-				{
-				set_thread_priority(Thread(), B_LOW_PRIORITY);					//	reset the priority
-				be_app->PostMessage(CM_MSG_ACK_STOP_THINKING);					//	acknowledge the STOP
-				}
+		case CM_MSG_ACK_ROW_STOP_THINKING: // From Row Brain
+			nDeadBrains++;
+			if (nDeadBrains == nRows)
+			{
+				set_thread_priority(Thread(), B_LOW_PRIORITY);
+				be_app->PostMessage(CM_MSG_ACK_STOP_THINKING);
+			}
 			break;
-		case CM_MSG_CELL_RESULT:												//	row brain reported on cell
+		case CM_MSG_CELL_RESULT: // From Row Brain
 		{
-			long row, column, value;											//	row & column & value
-			float percentDone;												//	to calculate thinking %
-			theEvent->FindInt32("row", &row); theEvent->FindInt32("column", &column);	//	retrieve row & column
-			theEvent->FindInt32("cellValue", &value);							//	retrieve the value
+			long row, column, value;
+			float percentDone;
+			theEvent->FindInt32("row", &row); theEvent->FindInt32("column", &column);
+			theEvent->FindInt32("cellValue", &value);
 //			printf("%d %d %d\n", row, column, value);
-			evalBoard.bombs[row][column] = value;								//	store the value
-			nCellsSearched++;												//	increment search count
-			BMessage *updateMessage = new BMessage(CM_SHOW_PERCENT);				//	create a new message
-			percentDone = 1.0;	// One more cell done
-			updateMessage->AddFloat("percent", percentDone);						//	add the value to it
-			be_app->PostMessage(updateMessage);								//	tell the app
-			if (nCellsSearched >= theBoard.nRows*theBoard.nCols)					//	i.e. search is all done
-				{
-				doingThreadedSearch = false;									//	switch off flag
-				SelectRandomMove(whichPlayer);								//	select a move & have done with it
-				} // end of successful completion
+			evalBoard.bombs[row][column] = value;
+			nCellsSearched++;
+			BMessage *updateMessage = new BMessage(CM_SHOW_PERCENT);
+			percentDone = 1.0;
+			updateMessage->AddFloat("percent", percentDone);
+			be_app->PostMessage(updateMessage);
+			if (nCellsSearched >= theBoard.getWidth()*theBoard.getHeight())
+			{
+				doingThreadedSearch = false;
+				SelectRandomMove(whichPlayer);
+			}
 			break;
 		}
-		case CM_MSG_MAKE_MOVE:												//	command to search
-			long player, playerType;											//	the desired player / type
-			CMBoard *sentBoard;												//	used to retrieve the board we are sent
-			status_t errCode;												//	catches error codes
-			errCode = theEvent->FindPointer("thinkBoard", &(void*)sentBoard);				//	retrieve the board
-			if (errCode != B_NO_ERROR)										//	if it failed
+		case CM_MSG_MAKE_MOVE:
+		{
+			long player, playerType;
+			CMBoard *sentBoard = NULL;
+			status_t errCode;
+			errCode = theEvent->FindPointer("thinkBoard", &(void*)sentBoard);
+			if (errCode != B_OK)
 			{
-				be_app->PostMessage(CM_MSG_CANT_MAKE_MOVE);						//	complain
+				be_app->PostMessage(CM_MSG_CANT_MAKE_MOVE);
 				break;
-			} // end of no board
-			theBoard = *sentBoard;											//	make a local copy
-			delete sentBoard;												//	and delete the dynamic one
+			}
+			assert(sentBoard != NULL);
+			theBoard = *sentBoard;	
+			delete sentBoard;
 			errCode = theEvent->FindInt32("player", &player);						//	retrieve the player
 			if (errCode != B_NO_ERROR)										//	if it failed
 				{
@@ -114,6 +118,7 @@ void CMBrain::MessageReceived(BMessage *theEvent)									//	responds to event m
 					SelectRandomMove(player);								//	and select a random one from evalBoard		
 					break;
 				} // end of switch for player type
+		}
 		case LowPriorityItem:												//	switch to low priority thought
 			storedPriority = B_LOW_PRIORITY;									//	store the priority for later ;-)
 			break;
@@ -151,8 +156,8 @@ void CMBrain::SelectRandomMove(int thePlayer)									//	chooses a random move f
 
 //	printf("Eval board is:\n");
 //	evalBoard.Print();
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)										//	loop through rows
+		for (j = 0; j < theBoard.getWidth(); j++)									//	and cells
 			{
 			moveValue = evalBoard.bombs[i][j] * thePlayer;						//	compute the cell's value
 			if (moveValue > bestMove)										//	if it's better than the best so far 
@@ -166,10 +171,10 @@ void CMBrain::SelectRandomMove(int thePlayer)									//	chooses a random move f
 
 	randFract = rand();														//	get a random integer
 	randFract /= RAND_MAX;													//	convert it to a float in [0,1]
-	randomNumber = nGoodMoves * randFract + 1;									//	convert to an integer
+	randomNumber = (int)(nGoodMoves * randFract + 1);
 
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)										//	loop through rows
+		for (j = 0; j < theBoard.getWidth(); j++)									//	and cells
 			{
 			moveValue = evalBoard.bombs[i][j] * thePlayer;						//	compute the cell's value
 			if (moveValue == bestMove)										//	if it is the right value
@@ -193,8 +198,8 @@ void CMBrain::EvalLegal(int thePlayer)											//	evaluates the board for rand
 	{	
 	int i, j;																//	loop indices
 	evalBoard.Reset();														//	zero out evalBoard
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)										//	loop through rows
+		for (j = 0; j < theBoard.getWidth(); j++)									//	and cells
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
 				evalBoard.bombs[i][j] = thePlayer;								//	say it's a good move
 			else															//	otherwise
@@ -205,8 +210,8 @@ void CMBrain::EvalValue(int thePlayer)											//	evaluates the board for smar
 	{
 	int i, j;																//	loop indices
 	evalBoard.Reset();														//	zero out evalBoard
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)										//	loop through rows
+		for (j = 0; j < theBoard.getWidth(); j++)									//	and cells
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
 				{
 				testBoard = theBoard;										//	copy the board for testing
@@ -225,8 +230,8 @@ void CMBrain::EvalMinMax(int thePlayer, int depth)								//	minmax search
 	float percentDone;
 
 	evalBoard.Reset();														//	zero out evalBoard
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	for (i = 0; i < theBoard.getHeight(); i++)
+		for (j = 0; j < theBoard.getWidth(); j++)
 		{
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
 			{
@@ -259,9 +264,9 @@ int CMBrain::DeeperMinMax(int thePlayer, CMBoard &theBoard, int depth)				//	min
 	int bestPossible = PLAYER_WIPED_OUT * -thePlayer;								//	best possible result:  wipeout
 	
 	bestValue = PLAYER_WIPED_OUT * thePlayer;									//	we hope to find something better than this		
-	int i, j;																//	loop indices
-	for (i = 0; i < theBoard.nRows; i++)										//	loop through rows
-		for (j = 0; j < theBoard.nCols; j++)									//	and cells
+	int i, j;
+	for (i = 0; i < theBoard.getHeight(); i++)
+		for (j = 0; j < theBoard.getWidth(); j++)
 			{
 			if (theBoard.IsLegalMove(i, j, thePlayer))							//	if it's a legal move
 				{
@@ -293,23 +298,25 @@ void CMBrain::EvalThreadedMinMax(long thePlayer, long depth)						//	minmax sear
 	doingThreadedSearch = true;												//	set flag to say it's underway
 	nCellsSearched = 0;														//	and this is how many we've searched so far
 	whichPlayer = thePlayer;													//	save the player ID for later
-	if (nRows != theBoard.nRows)												//	we have the wrong # of brains
+	if (nRows != theBoard.getHeight())												//	we have the wrong # of brains
 		{
 		if (rowBrains != NULL) delete[] rowBrains;								//	get rid of any old copy
-		rowBrains = new CMRowBrain[theBoard.nRows];								//	create new ones
-		nRows = theBoard.nRows;												//	reset the counter
+		rowBrains = new CMRowBrain[theBoard.getHeight()];								//	create new ones
+		nRows = theBoard.getHeight();												//	reset the counter
 		for (long i = 0; i < nRows; i++)										//	walk through them
 			rowBrains[i].SetMaster(this, i);									//	set it's master		
-		} // end of brain allocation
-	for (long i = 0; i < nRows; i++)											//	walk through the rows
-		{
-		CMBoard *sendBoard = new CMBoard(theBoard);								//	copy the board
-		BMessage *thinkBoardMessage = new BMessage(CM_MSG_CONSIDER_ROW);				//	create a message to send
-		thinkBoardMessage->AddPointer("thinkBoard", sendBoard);					//	row is responsible for deleting the board
-		thinkBoardMessage->AddInt32("player", thePlayer);							//	add the player's ID
-		thinkBoardMessage->AddInt32("depth", depth);								//	add the depth of search
-		rowBrains[i].PostMessage(thinkBoardMessage);								//	post the message
-		delete thinkBoardMessage;											//	and delete it when done
-		set_thread_priority(rowBrains[i].Thread(), storedPriority);					//	reset the priority of the rowbrain
-		} // end of walk through rows
-	} // end of EvalThreadedMinMax()
+	}
+	for (long i = 0; i < nRows; i++)
+	{
+		CMBoard *sendBoard = new CMBoard(theBoard);
+		assert (sendBoard != NULL);
+		BMessage *thinkBoardMessage = new BMessage(CM_MSG_CONSIDER_ROW);
+		status_t err = thinkBoardMessage->AddPointer("thinkBoard", sendBoard);
+		assert(err == B_OK);
+		thinkBoardMessage->AddInt32("player", thePlayer);
+		thinkBoardMessage->AddInt32("depth", depth);
+		rowBrains[i].PostMessage(thinkBoardMessage);
+		delete thinkBoardMessage;
+		set_thread_priority(rowBrains[i].Thread(), storedPriority);
+	}
+}

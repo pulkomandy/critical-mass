@@ -4,7 +4,8 @@
 //
 //	CMassMenuBar.h
 
-#pragma once
+#ifndef __CMMENUBAR_H__
+#define __CMMENUBAR_H__
 
 #include "CMGUIDefs.h"
 
@@ -18,3 +19,5 @@ class CMassMenuBar : public BMenuBar											//	our viewing panel
 	CMassMenuBar(BRect frame, char *name);										//	constructor
 	virtual void MessageReceived(BMessage *theMessage);							//	reacts to messages
 	}; // end of class CMassMenuBar
+
+#endif

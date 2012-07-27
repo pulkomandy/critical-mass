@@ -2,7 +2,8 @@
 //	11/01/98
 //	Hamish Carr
 
-#pragma once
+#ifndef __CMBRAIN_H__
+#define __CMBRAIN_H__
 
 #include "CMBoard.h"
 #include "CMGUIDefs.h"
@@ -35,3 +36,5 @@ class CMBrain : public BLooper								//	class that does the thinking
 	void EvalThreadedMinMax(long thePlayer, long depth);			//	minmax search
 	int DeeperMinMax(int thePlayer, CMBoard &theBoard, int depth);	//	minmax search
 	}; // end of class CMBrain
+
+#endif

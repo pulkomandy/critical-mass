@@ -1,5 +1,7 @@
 //	CMassWindow.h
-#pragma once
+
+#ifndef __CMASSWINDOW_H__
+#define __CMASSWINDOW_H__
 
 #include "CMassView.h"
 #include "CMassMenuBar.h"
@@ -20,3 +22,4 @@ class CMassWindow : public BWindow 								//	our window class
 	virtual void MessageReceived(BMessage *theEvent);			//	responds to event messages
 	}; // end of class CMassWindow
 
+#endif
