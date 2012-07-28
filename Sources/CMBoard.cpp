@@ -113,27 +113,28 @@ int CMBoard::Weight(int r, int c)											//	routine to compute the weight of 
 			return centreWeight;										//	explodes if at least four bombs
 	} // end of Weight()
 
-int CMBoard::Evaluate()													//	evaluate the board's value 
-	{
-	int i, j;															//	loop indices
-	int value = 0;														//	the total value of the board
-	int nBombsTotal = 0;												//	total # of bombs on the board
-	bool hasRed = false, hasBlue = false;									//	flags for whether a player has been eliminated
+int CMBoard::Evaluate()	//	evaluate the board's value 
+{
+	int i, j;
+	int value = 0;	//	the total value of the board
+	int nBombsTotal = 0;	//	total # of bombs on the board
+	bool hasRed = false, hasBlue = false; //	flags for whether a player has been eliminated
 
-	for (i = 0; i < nRows; i++)											//	loop through rows
-		for (j = 0; j < nCols; j++)										//	and cells
-			{
-			hasRed |= (bombs[i][j] < 0);									//	update the hasRed flag
-			hasBlue |= (bombs[i][j] > 0);									//	and the hasBlue flag
-			value += Weight(i, j)*bombs[i][j];								//	update the value
-			nBombsTotal += abs(bombs[i][j]);								//	add to the total bombs
-			} // end of loop through cells
-	if ((!hasRed) && (nBombsTotal > 2))									//	red is first player, so we check that first
-		return RED_PLAYER * PLAYER_WIPED_OUT;								//	if there aren't any, red has lost
-	if ((!hasBlue) && (nBombsTotal > 2))									//	check blue next
-		return BLUE_PLAYER * PLAYER_WIPED_OUT;								//	if there aren't any, blue has lost
-	return value;														//	otherwise, return calculated value
-	} // end of Evaluate()
+	for (i = 0; i < nRows; i++)
+		for (j = 0; j < nCols; j++)
+		{
+			hasRed |= (bombs[i][j] < 0);
+			hasBlue |= (bombs[i][j] > 0);
+			value += Weight(i, j)*bombs[i][j];
+			nBombsTotal += abs(bombs[i][j]);
+		}
+
+	if ((!hasRed) && (nBombsTotal > 2))		//	red is first player, so we check that first
+		return RED_PLAYER * PLAYER_WIPED_OUT;	//	if there aren't any, red has lost
+	if ((!hasBlue) && (nBombsTotal > 2))	//	check blue next
+		return BLUE_PLAYER * PLAYER_WIPED_OUT;	//	if there aren't any, blue has lost
+	return value;	//	otherwise, return calculated value
+}
 
 bool CMBoard::HasPlayerWon(int player)										//	routine to test for victory
 	{
