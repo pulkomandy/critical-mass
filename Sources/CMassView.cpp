@@ -198,7 +198,7 @@ void CMassView::MessageReceived(BMessage *theMessage)								//	reacts to messag
 		case CM_MSG_SHOW_BOARD:
 		{
 			CMBoard *sentBoard = NULL;
-			status_t errCode = theMessage->FindPointer("displayBoard", &(void*)sentBoard);
+			status_t errCode = theMessage->FindPointer("displayBoard", (void**)&sentBoard);
 			if (errCode == B_NO_ERROR)
 			{
 				theBlitView->theBoard = theBoard = *sentBoard;

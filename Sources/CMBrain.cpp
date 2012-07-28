@@ -19,9 +19,11 @@ CMBrain::CMBrain()
 	storedPriority = B_LOW_PRIORITY;
 }
 
+
 CMBrain::~CMBrain()
 {
 }
+
 
 void CMBrain::MessageReceived(BMessage *theEvent)
 {
@@ -73,7 +75,7 @@ void CMBrain::MessageReceived(BMessage *theEvent)
 			long player, playerType;
 			CMBoard *sentBoard = NULL;
 			status_t errCode;
-			errCode = theEvent->FindPointer("thinkBoard", &(void*)sentBoard);
+			errCode = theEvent->FindPointer("thinkBoard", (void**)&sentBoard);
 			if (errCode != B_OK)
 			{
 				be_app->PostMessage(CM_MSG_CANT_MAKE_MOVE);
