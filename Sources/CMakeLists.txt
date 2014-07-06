@@ -14,4 +14,4 @@ add_custom_command(TARGET CriticalMass POST_BUILD
 	COMMAND xres -o ${CMASS_PATH} Resource.rsrc
 	DEPENDS Resource.rdef)
 
-target_link_libraries(CriticalMass be GL media )
+target_link_libraries(CriticalMass be GL media GLU )
