@@ -12,4 +12,4 @@ Critical Mass runs on the Haiku operating system.
 Downloads
 =========
 
-http://haikuware.com/directory/view-details/games/strategy/critical-mass-23
+This game is available in [HaikuDepot](https://depot.haiku-os.org/#/pkg/criticalmass/haikuports/2/2/-/-/1/x86_gcc2?bcguid=bc217-OLJD).
