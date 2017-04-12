@@ -52,7 +52,7 @@ void CMBrain::MessageReceived(BMessage *theEvent)
 			break;
 		case CM_MSG_CELL_RESULT: // From Row Brain
 		{
-			long row, column, value;
+			int32 row, column, value;
 			float percentDone;
 			theEvent->FindInt32("row", &row); theEvent->FindInt32("column", &column);
 			theEvent->FindInt32("cellValue", &value);
@@ -72,7 +72,7 @@ void CMBrain::MessageReceived(BMessage *theEvent)
 		}
 		case CM_MSG_MAKE_MOVE:
 		{
-			long player, playerType;
+			int32 player, playerType;
 			CMBoard *sentBoard = NULL;
 			status_t errCode;
 			errCode = theEvent->FindPointer("thinkBoard", (void**)&sentBoard);
