@@ -327,7 +327,7 @@ void CMassApplication::HandleMove(BMessage *theEvent)									//	handle a move
 	{
 	if (waitingForAckRejectClicks)														//	if we have already cancelled moves
 		return;
-	long row, column;																	//	the row and column chosen
+	int32 row, column;																	//	the row and column chosen
 	status_t errCode = theEvent->FindInt32("row", &row);								//	retrieve the row
 	if (errCode != B_NO_ERROR)															//	if it failed
 		{

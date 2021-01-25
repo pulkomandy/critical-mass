@@ -16,9 +16,9 @@ class CMRowBrain : public BLooper								//	class for threaded thinking
 	int whichRow;											//	which row to consider
 	BLooper *master;										//	who it reports to
 	bool stoppedEarly;										//	whether we got stopped early
-	long player;											//	which player we are searching for
+	int32 player;											//	which player we are searching for
 	int whichCol;											//	which column we are considering
-	long whatDepth;										//	what depth to search
+	int32 whatDepth;										//	what depth to search
 	CMBoard theBoard;										//	the common board used for all the searches
 	CMBoard testBoard;										//	kept globally to save construction
 			
