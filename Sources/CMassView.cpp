@@ -108,7 +108,7 @@ void CMassView::Draw(BRect updateRect)												//	draw the view
 
 void CMassView::MouseDown(BPoint where)												//	reacts to mouse clicks
 	{
-	long whichButtons = 1;															//	used for tracking which buttons are down
+	int32 whichButtons = 1;															//	used for tracking which buttons are down
 	Window()->CurrentMessage()->FindInt32("buttons", &whichButtons);				//	find out which buttons are down
 	
 	if (inGLMode && (whichButtons & B_SECONDARY_MOUSE_BUTTON))						//	if we are in GL mode, and button 2 is down
@@ -123,7 +123,7 @@ void CMassView::MouseDown(BPoint where)												//	reacts to mouse clicks
 		while (whichButtons)														//	loop until drop the mouse
 			{
 			snooze(20 * 1000);														//	snooze for 20 µs
-			GetMouse(&where, (ulong *)&whichButtons, true);									//	get the mouse location, &c.
+			GetMouse(&where, (uint32*)&whichButtons, true);									//	get the mouse location, &c.
 			vNow.x = (2.0 * where.x - frameWidth)/frameWidth;						//	set the vector	
 			vNow.y = -(2.0 * where.y - frameHeight)/frameHeight;						//	in both dimensions
 			Ball_Mouse(&ball, vNow);												//	and pass it to the Ball functions

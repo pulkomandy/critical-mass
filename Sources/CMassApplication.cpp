@@ -39,6 +39,19 @@ CMassApplication::CMassApplication()
 }
 
 
+bool CMassApplication::QuitRequested()
+{
+	bool ret = BApplication::QuitRequested();
+
+	if (ret) {
+		for (int i = 0; i < N_SOUNDS; i++)
+			delete theSounds[i];
+	}
+
+	return ret;
+}
+
+
 void CMassApplication::LoadSoundsAndImages()
 {
 	long i;
@@ -103,7 +116,7 @@ void CMassApplication::MessageReceived(BMessage *theEvent)								//	responds to
 	switch (theEvent->what)																//	just a big switch statement
 		{
 		case CM_MSG_MOVE_CHOSEN:														//	message from view to app with move
-			if (!waitingForAckRejectClicks && !waitingForAckStopThinking)				//	if there's nothing we're waiting for
+			if (!waitingForAckRejectClicks && !waitingForAckStopThinking) {				//	if there's nothing we're waiting for
 				if (doneDisplaying)														//	if display of last move is done
 					HandleMove(theEvent);												//	call subroutine
 				else																	//	i.e. display is not done yet 
@@ -111,6 +124,7 @@ void CMassApplication::MessageReceived(BMessage *theEvent)								//	responds to
 					pendingMove = new BMessage(*theEvent);								//	otherwise, store a copy of it
 					waitingForComputerMove = false;										//	we're no longer waiting
 					} // end of case where move is pending
+			}
 			break;
 			
 		case CM_MSG_ACK_REJECT_CLICKS:													//	view acknowledges "reject" message
@@ -327,7 +341,7 @@ void CMassApplication::HandleMove(BMessage *theEvent)									//	handle a move
 	{
 	if (waitingForAckRejectClicks)														//	if we have already cancelled moves
 		return;
-	long row, column;																	//	the row and column chosen
+	int32 row, column;																	//	the row and column chosen
 	status_t errCode = theEvent->FindInt32("row", &row);								//	retrieve the row
 	if (errCode != B_NO_ERROR)															//	if it failed
 		{
@@ -378,12 +392,13 @@ void CMassApplication::Pulse()															//	periodic processing
 		{
 		if ((now = system_time()) >= nextDisplayTime)									//	if it's time to send another frame
 			{
-			if (showingExplosion && soundOn)											//	if this frame is a boom with sound
+			if (showingExplosion && soundOn) {											//	if this frame is a boom with sound
 
 				if (theDisplayPlayer == RED_PLAYER)										//	depending on which player
 					theSounds[BOOM_1_SOUND]->Play();									//	play a boom sound
 				else
 					theSounds[BOOM_2_SOUND]->Play();									//	play a different boom sound
+			}
 
 			showingExplosion = !showingExplosion;										//	next frame isn't
 			nextDisplayTime = now + timeQuantum;										//	set when next display occurs
@@ -512,7 +527,10 @@ void CMassApplication::CancelThinking()													//	cancel any thinking
 	waitingForComputerMove = false;														//	we're no longer interested
 	waitingForAckRejectClicks = true;													//	set flag saying we're waiting
 	waitingForAckStopThinking = true;													//	in fact, set both
-	if (pendingMove != NULL) delete pendingMove; pendingMove = NULL;					//	get rid of any pending move
+	if (pendingMove != NULL) {
+		delete pendingMove;
+		pendingMove = NULL;					//	get rid of any pending move
+	}
 	theCMBrain.PostMessage(CM_MSG_STOP_THINKING);										//	cancel any pending thought
 	theCMWindow->PostMessage(CM_MSG_REJECT_CLICKS);										//	switch off clicks
 	theCMWindow->PostMessage(CM_RESET_STATUS_BAR);										//	switch off clicks

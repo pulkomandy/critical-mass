@@ -67,6 +67,8 @@ class CMassApplication : public BApplication 									//	our application class
 	void CancelThinking();														//	cancel any thinking
 	void CancelDisplay();														//	cancel any display
 	void ResetPlayer(int player, int playerType);								//	reset a particular player
+	
+	 bool QuitRequested() override;
 		
 	public:
 	void FatalErrorAlert(char *message);										//	sets up an alert, then dies

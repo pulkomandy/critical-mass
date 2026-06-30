@@ -4,6 +4,15 @@
 
 #define AUDIO_SUBSCRIPTION_FAILED SUICIDE_NOTE"I couldn't connect to the audio server"
 
+void
+play_buffer(void *cookie, void * buffer, size_t size, const media_raw_audio_format & format)
+{
+	CMSound* playing = (CMSound*) cookie;
+	
+	playing->Playback(buffer, size);
+}
+
+
 CMSound::CMSound(char *soundName, char *newSoundData, long soundLength)	
 	//	constructor that takes a pointer to the sound data
 {
@@ -32,15 +41,6 @@ CMSound::~CMSound()						//	destructor - releases the sound
 	delete the_audio_stream;	
 	delete alreadyPlaying;				//	delete the semaphore
 	} // end of ~CMSound destructor	
-
-
-void
-play_buffer(void *cookie, void * buffer, size_t size, const media_raw_audio_format & format)
-{
-	CMSound* playing = (CMSound*) cookie;
-	
-	playing->Playback(buffer, size);
-}
 
 
 void CMSound::Play()					//	plays the sound once

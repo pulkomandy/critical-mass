@@ -7,11 +7,9 @@ add_executable(CriticalMass
 	CMSemaphore.cpp CMRowBrain.cpp
 )
 
-get_target_property(CMASS_PATH CriticalMass LOCATION)
-
 add_custom_command(TARGET CriticalMass POST_BUILD 
 	COMMAND rc -o Resource.rsrc ${CMAKE_SOURCE_DIR}/Resources.rdef
-	COMMAND xres -o ${CMASS_PATH} Resource.rsrc
-	DEPENDS Resource.rdef)
+	COMMAND xres -o $<TARGET_FILE:CriticalMass> Resource.rsrc
+)
 
 target_link_libraries(CriticalMass be GL media GLU )
